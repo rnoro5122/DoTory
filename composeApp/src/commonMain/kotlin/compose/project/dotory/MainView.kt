@@ -14,6 +14,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import compose.project.dotory.screens.BookShelfScreen
+import compose.project.dotory.screens.DetailScreen
+import compose.project.dotory.screens.FinishScreen
 import compose.project.dotory.screens.FirstStoryScreen
 import compose.project.dotory.screens.MainScreen
 import compose.project.dotory.screens.SelectThemeScreen
@@ -36,7 +38,7 @@ fun MainView() {
             startDestination = "MainScreen"
         ) {
             composable("MainScreen") {
-                MainScreen()
+                MainScreen(navController, selectedItem)
             }
             composable("SelectThemeScreen") {
                 SelectThemeScreen(navController, selectedItem)
@@ -53,8 +55,11 @@ fun MainView() {
             composable("BookShelfScreen") {
                 BookShelfScreen(navController, selectedItem)
             }
-            composable("BookShelfScreen") {
-                BookShelfScreen(navController, selectedItem)
+            composable("FinishScreen") {
+                FinishScreen(navController, selectedItem)
+            }
+            composable("DetailScreen") {
+                DetailScreen(navController, selectedItem)
             }
         }
 

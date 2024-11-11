@@ -25,20 +25,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.mohamedrejeb.calf.core.LocalPlatformContext
@@ -63,6 +71,7 @@ fun PhotoUploadScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf(TextFieldValue("")) }
     var isImageUploaded by remember { mutableStateOf(false) }
+    val bookTitle = rememberSaveable { mutableStateOf("") }
 
     val pickerLauncher = rememberFilePickerLauncher(
         type = FilePickerFileType.Image,
@@ -163,37 +172,49 @@ fun PhotoUploadScreen(navController: NavController) {
         // 사진이 업로드된 후 텍스트 입력 필드와 확인 버튼 표시
         if (isImageUploaded) {
             Spacer(modifier = Modifier.height(50.dp))
-            OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                label = { Text("추가 정보를 입력해주세요") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 40.dp),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    cursorColor = MaterialTheme.colorScheme.primary
+            TextField(
+                value = bookTitle.value,
+                onValueChange = { newValue ->
+                    bookTitle.value = newValue
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                placeholder = {
+                    Text(
+                        "사진에 대한 짧은 기록을 남겨주세요.",
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 ),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
+                shape = RoundedCornerShape(30.dp),
+                // 아래 속성들 추가
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide() // 키보드 숨기기
                     }
-                )
+                ),
+                singleLine = true  // 한 줄 입력으로 제한
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if (inputText.text.isNotEmpty()) {
-                        showDialog = true // 입력 확인 후 팝업 표시
-                    }
+                    navController.navigate("SecondStoryScreen")
                 },
                 modifier = Modifier.padding(top = 16.dp)
             ) {

@@ -66,9 +66,9 @@ fun BottomNavigationBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedIconColor = Color.White,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedTextColor = Color.White,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
@@ -83,7 +83,7 @@ fun BottomNavigationBar(
                 },
                 label = {
                     Text(
-                        "나무",
+                        "홈",
                         fontSize = 20.sp
                     )
                 },
@@ -95,9 +95,9 @@ fun BottomNavigationBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedIconColor = Color.White,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedTextColor = Color.White,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
@@ -124,9 +124,9 @@ fun BottomNavigationBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedIconColor = Color.White,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.onSecondary,
                     unselectedTextColor = Color.White,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )

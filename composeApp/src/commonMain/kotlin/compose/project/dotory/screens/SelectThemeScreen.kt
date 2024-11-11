@@ -1,6 +1,8 @@
 package compose.project.dotory.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,30 +11,36 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import dotory.composeapp.generated.resources.Res
-import dotory.composeapp.generated.resources.many_books
+import dotory.composeapp.generated.resources.clouds
 import dotory.composeapp.generated.resources.lights
+import dotory.composeapp.generated.resources.many_books
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SelectThemeScreen(navController: NavController, selectedItem: MutableState<Int>) {
+    var cloudsImage = painterResource(resource = Res.drawable.clouds)
     Box(
     ) {
         Image(
@@ -58,97 +66,84 @@ fun SelectThemeScreen(navController: NavController, selectedItem: MutableState<I
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.height(250.dp))
             Text(
                 "주제를 골라주세요.",
-                fontSize = 50.sp
+                fontSize = 40.sp,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(50.dp))
             Row(
                 modifier = Modifier,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(60.dp)
             ) {
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                ) {
-                    Text("판타지", color = Color.White)
-                }
-                Spacer(modifier = Modifier.width(80.dp))
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
-                ) {
-                    Text("모험", color = Color.White)
-                }
+                CloudButton("고전", cloudsImage, navController)
+                CloudButton("판타지", cloudsImage, navController)
             }
             Spacer(modifier = Modifier.height(30.dp))
             Row(
                 modifier = Modifier,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(60.dp)
             ) {
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                ) {
-                    Text("로맨스", color = Color.White)
-                }
-                Spacer(modifier = Modifier.width(80.dp))
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
-                ) {
-                    Text("일상", color = Color.White)
-                }
+                CloudButton("공포", cloudsImage, navController)
+                CloudButton("모험", cloudsImage, navController)
             }
             Spacer(modifier = Modifier.height(30.dp))
             Row(
                 modifier = Modifier,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(60.dp)
             ) {
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                ) {
-                    Text("코믹", color = Color.White)
-                }
-                Spacer(modifier = Modifier.width(80.dp))
-                Button(
-                    onClick = { navController.navigate("FirstStoryScreen") },
-                    modifier = Modifier.height(50.dp).width(120.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
-                ) {
-                    Text("추리", color = Color.White)
-                }
-            }
-            Spacer(modifier = Modifier.height(80.dp))
-            Button(
-                onClick = { /* 새로고침 기능 구현 */ },
-                modifier = Modifier.height(50.dp).width(120.dp),
-                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                Text("새로고침", color = Color.White)
+                CloudButton("추리", cloudsImage, navController)
+                CloudButton("유머", cloudsImage, navController)
             }
         }
     }
 }
+
+@Composable
+fun CloudButton(
+    name: String,
+    backgroundImage: Painter,
+    navController: NavController
+) {
+    var isClicked by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .height(70.dp)
+            .width(120.dp)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    isClicked = !isClicked
+                    navController.navigate("FirstStoryScreen")
+                }
+            )
+            .offset(
+//                x = if (isClicked) (-4).dp else 0.dp,
+                y = if (isClicked) (-3).dp else 0.dp
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = backgroundImage,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+        Text(
+            name,
+            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
 
 fun Modifier.fillWidthOfParent(parentPadding: Dp) = this.then(
     layout { measurable, constraints ->

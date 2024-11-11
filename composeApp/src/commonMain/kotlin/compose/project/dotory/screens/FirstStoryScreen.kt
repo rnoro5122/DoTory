@@ -46,15 +46,10 @@ import kotlin.random.Random
 @Composable
 fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<Int>) {
     val storyText =
-        "한경이는 여름날 숲 속을 산책하다, 말을 할 줄 아는 동물 친구들이 사는 신비로운 공간을 발견했어요. 사슴, 다람쥐, 올빼미, 여우가 다정하게 한경이를 맞이하며 함께 놀자고 초대했죠. 한경이는 동물들과 함께 숲을 탐험하며 즐겁게 놀았어요.\n" +
-                "\n" +
-                "하지만 며칠 뒤, 숲에 이상한 일이 생기기 시작했어요. 공기가 탁해지고, 시냇물이 흐려진 거예요. 당황한 동물 친구들이 한경이에게 말했어요.\n" +
-                "\n" +
-                "\"한경아, 숲이 아파하고 있어. 우리도 이 문제를 어떻게 해결해야 할지 모르겠어.\"\n" +
-                "\n" +
-                "한경이는 고민에 잠기며 숲을 다시 건강하게 만들 방법을 떠올리기 시작했어요. \n" +
-                "\n" +
-                "이제 한경이는 어떤 선택을 할까요?"
+        "한경이는 여름날 숲 속을 산책하다, 말을 할 줄 아는 동물 친구들이 사는 신비로운 공간을 발견했어요. 사슴, 다람쥐, 올빼미, 여우가 다정하게 한경이를 맞이하며 함께 놀자고 초대했죠. 한경이는 동물들과 함께 숲을 탐험하며 즐겁게 놀았어요.\n\n" +
+                "하지만 며칠 뒤, 숲에 이상한 일이 생기기 시작했어요. 공기가 탁해지고, 시냇물이 흐려진 거예요. 당황한 동물 친구들이 한경이에게 말했어요.\n\n" +
+                "\"한경아, 숲이 아파하고 있어. 우리도 이 문제를 어떻게 해결해야 할지 모르겠어.\""
+
 
     val words = storyText.split(" ") // 텍스트를 단어별로 분리
     var displayedText by remember { mutableStateOf("") }
@@ -65,7 +60,7 @@ fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<In
         delay(3000) // 처음 3초 동안 로딩 프로그레스 표시
         isLoading = false
         words.forEach { word ->
-            val randomDelay = Random.nextLong(100, 500) // 100ms ~ 500ms 사이의 불규칙적 지연
+            val randomDelay = Random.nextLong(100, 300) // 100ms ~ 300ms 사이의 불규칙적 지연
             delay(randomDelay)
             displayedText += "$word " // 한 단어씩 추가
         }
@@ -130,7 +125,7 @@ fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<In
             // 텍스트 애니메이션
             Text(
                 text = displayedText,
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp)
