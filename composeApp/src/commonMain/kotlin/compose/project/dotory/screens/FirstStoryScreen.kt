@@ -12,13 +12,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,7 +21,6 @@ import dotory.composeapp.generated.resources.Res
 import dotory.composeapp.generated.resources.books
 import dotory.composeapp.generated.resources.squirrel_read
 import dotory.composeapp.generated.resources.story_background
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 
 import androidx.compose.animation.AnimatedVisibility
@@ -39,9 +31,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.font.FontWeight
+import kotlinx.coroutines.*
 
 import kotlin.random.Random
+
+
+expect fun initLlama()
+expect fun runLlama(prompt: String, printer: (String) -> Unit)
+
 
 @Composable
 fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<Int>) {
@@ -50,22 +50,10 @@ fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<In
                 "하지만 며칠 뒤, 숲에 이상한 일이 생기기 시작했어요. 공기가 탁해지고, 시냇물이 흐려진 거예요. 당황한 동물 친구들이 한경이에게 말했어요.\n\n" +
                 "\"한경아, 숲이 아파하고 있어. 우리도 이 문제를 어떻게 해결해야 할지 모르겠어.\""
 
-
-    val words = storyText.split(" ") // 텍스트를 단어별로 분리
+    //val words = storyText.split(" ") // 텍스트를 단어별로 분리
     var displayedText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
     var showNextButton by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        delay(3000) // 처음 3초 동안 로딩 프로그레스 표시
-        isLoading = false
-        words.forEach { word ->
-            val randomDelay = Random.nextLong(100, 300) // 100ms ~ 300ms 사이의 불규칙적 지연
-            delay(randomDelay)
-            displayedText += "$word " // 한 단어씩 추가
-        }
-        showNextButton = true // 모든 단어가 표시된 후 버튼 표시
-    }
 
     Box(
         modifier = Modifier
@@ -147,6 +135,37 @@ fun FirstStoryScreen(navController: NavController, selectedItem: MutableState<In
                 ) {
                     Text("다음으로", color = MaterialTheme.colorScheme.background)
                 }
+            }
+        }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        //delay(3000) // 처음 3초 동안 로딩 프로그레스 표시
+        coroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                initLlama()
+            }
+            isLoading = false
+        }
+        /* words.forEach { word ->
+            val randomDelay = Random.nextLong(100, 300) // 100ms ~ 300ms 사이의 불규칙적 지연
+            delay(randomDelay)
+            displayedText += "$word " // 한 단어씩 추가
+        } */
+    }
+
+//    val userPrompt = "Create the first part of a fantasy story with these details: Child's name: 한경 Gender: Boy Theme: Fantasy Generate PART 1 of the story, introducing 한경 as the main character in a magical setting. Include an environmental challenge that he discovers. Stop at WAITING_FOR_PHOTO marker after presenting the environmental issue. Remember to keep the environmental issue simple and relatable for children."
+    val userPrompt = "Create a fantasy story PART 1. Child: 한경 (boy). Introduce 한경 in a magical setting, present a simple environmental challenge, then stop at WAITING_FOR_PHOTO. Keep story and issues child-friendly."
+
+    LaunchedEffect(isLoading) {
+        if (!isLoading) {
+            coroutineScope.launch {
+                withContext(Dispatchers.IO) {
+                    runLlama(userPrompt) { displayedText += it }
+                }
+                showNextButton = true // 모든 단어가 표시된 후 버튼 표시
             }
         }
     }

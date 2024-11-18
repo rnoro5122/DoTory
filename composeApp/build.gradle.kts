@@ -1,12 +1,13 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.chaquoPython)
 }
 
 kotlin {
@@ -52,6 +53,34 @@ kotlin {
     }
 }
 
+chaquopy {
+    defaultConfig {
+        version = libs.versions.python.get()
+
+        pip {
+            // Use the local repository for the Python packages.
+            options("--extra-index-url", "libs/pip/local")
+
+            // Dependencies for the llama-cpp-python package.
+            install("typing-extensions")
+            install("numpy")
+            install("diskcache")
+            install("jinja2")
+            install("MarkupSafe")
+            install("llama-cpp-python")
+
+            // Dependencies for the huggingface_hub package.
+            install("PyYAML")
+            install("huggingface_hub")
+        }
+    }
+    sourceSets {
+        getByName("main") {
+            srcDir("src/androidMain/python")
+        }
+    }
+}
+
 android {
     namespace = "compose.project.dotory"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -62,6 +91,9 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
     packaging {
         resources {
@@ -83,4 +115,3 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     debugImplementation(compose.uiTooling)
 }
-

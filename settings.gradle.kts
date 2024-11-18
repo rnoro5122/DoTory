@@ -12,6 +12,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            setUrl("https://chaquo.com/maven-test")
+        }
     }
 }
 
