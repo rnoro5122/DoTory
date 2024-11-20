@@ -49,6 +49,8 @@ kotlin {
             implementation(libs.calf.file.picker)
             implementation(libs.calf.file.picker.coil)
             implementation(libs.coil.compose)
+            implementation("org.jetbrains.compose.material3:material3-window-size-class:1.7.1")
+            implementation("org.jetbrains.compose.ui:ui")
         }
     }
 }

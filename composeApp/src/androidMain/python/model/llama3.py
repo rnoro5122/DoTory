@@ -4,8 +4,8 @@ from llama_cpp import Llama, CreateChatCompletionStreamResponse
 from .config import ChatHistory
 
 # Set model id
-model_id = "lmstudio-community/Llama-3.2-3B-Instruct-GGUF"
-# model_id = "lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF"
+# model_id = "Bllossom/llama-3.2-Korean-Bllossom-3B"
+model_id = "lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF"
 
 # Load model
 model = Llama.from_pretrained(
@@ -14,21 +14,6 @@ model = Llama.from_pretrained(
     verbose=False
 )
 
-# Prompt setting
-# system_prompt = (
-#         "You are a creative and imaginative storyteller crafting engaging fairy tales for children. "
-#         + "The child becomes the main character of the story, which unfolds based on their chosen theme. "
-#         + "The story should introduce an environmental issue midway, pausing the narrative. "
-#         + "The child will take real-world action to address the issue and upload a photo. "
-#         + "After receiving the photo, you will seamlessly incorporate the child’s actions "
-#         + "into the second half of the story, leading to a natural and satisfying conclusion. "
-#         + "Always write your output in **Korean**, ensuring the story is fun, immersive, and suitable for children. "
-#         + "Each output should be concise, with a response length of approximately 500 characters. "
-#         + "Do not create a title for the story. Focus only on the main body of the narrative. "
-#         + "Use conversational yet fairy-tale-like language, ending sentences with forms like '~했습니다' or '~했어요.' "
-#         + "Ensure sentences are complete and fully formed, without being cut off. "
-#         + "Use simple and easy-to-understand words so that children can easily follow the story."
-# )
 system_prompt = (
     "You are a Korean storyteller creating children's fairy tales. "
     "Story Format: PART 1 (opening + adventure + environmental issue) -> WAITING_FOR_PHOTO -> PART 2 (action + ending). "

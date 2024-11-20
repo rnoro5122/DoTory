@@ -1,8 +1,7 @@
-package compose.project.dotory.theme
+package compose.project.dotory.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
 import org.jetbrains.compose.resources.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight

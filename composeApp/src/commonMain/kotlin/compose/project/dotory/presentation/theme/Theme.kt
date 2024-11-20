@@ -1,4 +1,4 @@
-package compose.project.dotory.theme
+package compose.project.dotory.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
