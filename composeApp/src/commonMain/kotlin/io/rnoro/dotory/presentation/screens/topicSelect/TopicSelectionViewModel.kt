@@ -53,7 +53,7 @@ class TopicSelectionViewModel(
                 navController = navController,
                 storyId = genre.name,
                 isLlmMode = true,
-                topic = genre.displayName
+                topic = genre.id
             )
         } else {
             // 일반 모드일 때는 기존 로직 유지
