@@ -8,9 +8,9 @@ actual fun initLlama() {
     )
 }
 
-actual fun runLlama(prompt: String, printer: (String) -> Unit) {
+actual fun runLlama(prompt: String, reset: Boolean, printer: (String) -> Unit) {
     runPy(
         functionName = "run_llama3",
-        args = arrayOf(prompt, printer)
+        args = arrayOf(prompt, printer, reset)
     )
 }

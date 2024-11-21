@@ -19,7 +19,7 @@ data class UserInfo(
 )
 
 expect fun initLlama()
-expect fun runLlama(prompt: String, printer: (String) -> Unit)
+expect fun runLlama(prompt: String, reset: Boolean = false, printer: (String) -> Unit = {})
 
 class FairyTaleViewModel : ViewModel() {
     private var storyBook: StoryBook? = null
@@ -93,21 +93,17 @@ class FairyTaleViewModel : ViewModel() {
                 isLoading = false
 
                 val userInfo = UserInfo(
-                    name = "아이름",
+                    name = "한경",
                     gender = "여자"
                 )
 
-                val prompt = """
-                    Create a ${topic} story PART 1. 
-                    Child: ${userInfo.name}, ${userInfo.gender}. 
-                    Introduce ${userInfo.name} in a magical setting, 
-                    present a simple environmental challenge, 
-                    then stop at WAITING_FOR_PHOTO. 
-                    Keep story and issues child-friendly.
-                """.trimIndent()
-
                 withContext(Dispatchers.IO) {
-                    runLlama(prompt) { text ->
+                    val part = if (hasCompletedActivity) 2 else 1
+                    val prompt = """
+                        Start generating PART $part of a story about $topic, under the circumstances - Main Character: '${userInfo.name}' (${userInfo.gender}).
+                    """.trimIndent()
+
+                    runLlama(prompt, reset = !hasCompletedActivity) { text ->
                         displayedText += text
                     }
                 }
