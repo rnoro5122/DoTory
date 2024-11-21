@@ -1,19 +1,34 @@
 package io.rnoro.dotory.presentation.components
 
+import StoryBook
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import io.rnoro.dotory.domain.models.Book
 import io.rnoro.dotory.platform.rememberWindowInfo
 import io.rnoro.dotory.util.pageTransitionAnimation
 import kotlinx.coroutines.delay
@@ -22,10 +37,10 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun BookCarousel(
-    books: List<Book>,
+    books: List<StoryBook>,  // Book -> StoryBook으로 변경
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
-    onBookClick: (Book) -> Unit
+    onBookClick: (StoryBook) -> Unit  // Book -> StoryBook으로 변경
 ) {
     val windowInfo = rememberWindowInfo()
     val screenWidth = windowInfo.screenWidthDp.dp

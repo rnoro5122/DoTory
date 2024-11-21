@@ -18,12 +18,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import io.rnoro.dotory.presentation.screens.BookShelfScreen
 import io.rnoro.dotory.presentation.screens.fairyTale.FairyTaleScreen
 import io.rnoro.dotory.presentation.screens.fairyTale.FairyTaleViewModel
 import io.rnoro.dotory.presentation.screens.main.MainScreen
 import io.rnoro.dotory.presentation.screens.topicSelect.TopicSelectionScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.rnoro.dotory.presentation.screens.bookShelf.BookShelfScreen
+import io.rnoro.dotory.presentation.screens.storyComplete.StoryCompleteScreen
 
 @Composable
 fun AppNavigation(
@@ -52,14 +53,14 @@ fun AppNavigation(
                     enterTransition = {
                         when (initialState.destination.route) {
                             NavigationConfig.TOPIC_SELECTION_SCREEN -> {
-                                // 이야기 생성 -> 홈 (아래로 밀려 내려옴)
+                                // TopicSelection -> Main (Main이 제자리에서 나타남)
                                 slideInVertically(
                                     initialOffsetY = { -it },
                                     animationSpec = tween(300)
                                 )
                             }
                             NavigationConfig.BOOKSHELF_SCREEN -> {
-                                // 책장 -> 홈 (위로 밀려 올라옴)
+                                // Bookshelf -> Main (Main이 아래에서 위로 밀고 올라옴)
                                 slideInVertically(
                                     initialOffsetY = { it },
                                     animationSpec = tween(300)
@@ -71,14 +72,14 @@ fun AppNavigation(
                     exitTransition = {
                         when (targetState.destination.route) {
                             NavigationConfig.TOPIC_SELECTION_SCREEN -> {
-                                // 홈 -> 이야기 생성 (아래로 밀려남)
+                                // Main -> TopicSelection (Main이 위로 밀려 올라감)
                                 slideOutVertically(
                                     targetOffsetY = { -it },
                                     animationSpec = tween(300)
                                 )
                             }
                             NavigationConfig.BOOKSHELF_SCREEN -> {
-                                // 홈 -> 책장 (위로 밀려남)
+                                // Main -> Bookshelf (Main이 아래로 밀려남)
                                 slideOutVertically(
                                     targetOffsetY = { it },
                                     animationSpec = tween(300)
@@ -88,50 +89,50 @@ fun AppNavigation(
                         }
                     }
                 ) {
-                    MainScreen()
+                    MainScreen(navController = navController, navigationViewModel = viewModel)
                 }
 
                 composable(
                     route = NavigationConfig.TOPIC_SELECTION_SCREEN,
                     enterTransition = {
-                        // 이야기 생성 화면이 아래에서 위로 밀고 올라옴
+                        // Main -> TopicSelection (TopicSelection이 아래에서 위로 밀고 올라옴)
                         slideInVertically(
                             initialOffsetY = { it },
                             animationSpec = tween(300)
                         )
                     },
                     exitTransition = {
-                        // 이야기 생성 화면이 위로 밀려 올라가며 사라짐
-                        slideOutVertically(
-                            targetOffsetY = { -it },
-                            animationSpec = tween(300)
-                        )
-                    }
-                ) {
-                    TopicSelectionScreen(
-                        navigationViewModel = viewModel,
-                        navController = navController  // NavController 직접 전달
-                    )
-                }
-
-                composable(
-                    route = NavigationConfig.BOOKSHELF_SCREEN,
-                    enterTransition = {
-                        // 책장 화면이 위에서 아래로 밀고 내려옴
-                        slideInVertically(
-                            initialOffsetY = { -it },
-                            animationSpec = tween(300)
-                        )
-                    },
-                    exitTransition = {
-                        // 책장 화면이 아래로 밀려 내려가며 사라짐
+                        // TopicSelection -> Main (TopicSelection이 아래로 밀려 내려감)
                         slideOutVertically(
                             targetOffsetY = { it },
                             animationSpec = tween(300)
                         )
                     }
                 ) {
-                    BookShelfScreen()
+                    TopicSelectionScreen(
+                        navigationViewModel = viewModel,
+                        navController = navController
+                    )
+                }
+
+                composable(
+                    route = NavigationConfig.BOOKSHELF_SCREEN,
+                    enterTransition = {
+                        // Main -> Bookshelf (Bookshelf가 위에서 아래로 밀고 내려옴)
+                        slideInVertically(
+                            initialOffsetY = { -it },
+                            animationSpec = tween(300)
+                        )
+                    },
+                    exitTransition = {
+                        // Bookshelf -> Main (Bookshelf가 위로 밀려나감)
+                        slideOutVertically(
+                            targetOffsetY = { -it },
+                            animationSpec = tween(300)
+                        )
+                    }
+                ) {
+                    BookShelfScreen(navController = navController, navigationViewModel = viewModel)
                 }
 
                 composable(
@@ -140,17 +141,23 @@ fun AppNavigation(
                         navArgument("topicId") {
                             type = NavType.StringType
                             nullable = false
+                        },
+                        navArgument("isFromBookshelf") {
+                            type = NavType.BoolType
+                            defaultValue = false
                         }
                     )
                 ) { entry ->
                     val topicId = requireNotNull(entry.arguments?.getString("topicId"))
+                    val isFromBookshelf = entry.arguments?.getBoolean("isFromBookshelf") ?: false
                     val fairyTaleViewModel: FairyTaleViewModel = viewModel()
 
                     FairyTaleScreen(
                         viewModel = fairyTaleViewModel,
                         storyId = topicId,
                         onBackPressed = { navController.popBackStack() },
-                        navController = navController
+                        navController = navController,
+                        isFromBookshelf = isFromBookshelf
                     )
                 }
 
@@ -171,6 +178,28 @@ fun AppNavigation(
                     ActivityRecordScreen(
                         viewModel = fairyTaleViewModel,
                         navController = navController
+                    )
+                }
+
+                composable(
+                    route = NavigationConfig.STORY_COMPLETE_ROUTE,
+                    arguments = listOf(
+                        navArgument("storyId") {
+                            type = NavType.StringType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val storyId = requireNotNull(backStackEntry.arguments?.getString("storyId"))
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(NavigationConfig.FAIRY_TALE_ROUTE)
+                    }
+                    val fairyTaleViewModel: FairyTaleViewModel = viewModel(parentEntry)
+
+                    StoryCompleteScreen(
+                        viewModel = fairyTaleViewModel,
+                        navigationViewModel = viewModel,  // NavigationViewModel 전달
+                        navController = navController,
+                        storyId = storyId
                     )
                 }
             }

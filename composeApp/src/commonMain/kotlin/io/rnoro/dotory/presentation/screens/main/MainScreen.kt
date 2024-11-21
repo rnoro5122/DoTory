@@ -1,15 +1,9 @@
 package io.rnoro.dotory.presentation.screens.main
 
+import StoryBook
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,9 +22,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.rnoro.dotory.domain.models.Book
-import io.rnoro.dotory.domain.models.BookResources
+import androidx.navigation.NavHostController
+import dotory.composeapp.generated.resources.Res
+import dotory.composeapp.generated.resources.boy_icon
 import io.rnoro.dotory.presentation.components.BookCarousel
+import io.rnoro.dotory.presentation.navigation.NavigationViewModel
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -38,21 +34,26 @@ expect fun WindowSizeWrapper(content: @Composable (WindowSizeClass) -> Unit)
 
 @Composable
 fun MainScreen(
+    navigationViewModel: NavigationViewModel,
+    navController: NavHostController
 ) {
     WindowSizeWrapper { windowSizeClass ->
         MainScreenContent(
             windowSizeClass = windowSizeClass,
             viewModel = MainViewModel(),
-            onBookClick = { /* 책 클릭 처리 */ }
+            navigationViewModel = navigationViewModel,
+            navController = navController
         )
     }
 }
+
 
 @Composable
 fun MainScreenContent(
     windowSizeClass: WindowSizeClass,
     viewModel: MainViewModel,
-    onBookClick: (Book) -> Unit
+    navigationViewModel: NavigationViewModel,
+    navController: NavHostController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -65,7 +66,7 @@ fun MainScreenContent(
             titleBottomPadding = 8.dp,
             topPadding = 16.dp,
             contentPadding = 12.dp,
-            carouselTitleSize = 16.sp  // 추가
+            carouselTitleSize = 16.sp
         )
         WindowWidthSizeClass.Medium -> UiSizes(
             profileIconSize = 56.dp,
@@ -75,7 +76,7 @@ fun MainScreenContent(
             titleBottomPadding = 12.dp,
             topPadding = 20.dp,
             contentPadding = 16.dp,
-            carouselTitleSize = 18.sp  // 추가
+            carouselTitleSize = 18.sp
         )
         else -> UiSizes(
             profileIconSize = 64.dp,
@@ -85,7 +86,7 @@ fun MainScreenContent(
             titleBottomPadding = 16.dp,
             topPadding = 40.dp,
             contentPadding = 30.dp,
-            carouselTitleSize = 20.sp  // 추가
+            carouselTitleSize = 20.sp
         )
     }
 
@@ -115,6 +116,7 @@ fun MainScreenContent(
                 )
             }
 
+            // Recent Books Section
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -131,22 +133,12 @@ fun MainScreenContent(
                     textAlign = TextAlign.Center
                 )
                 BookCarousel(
-                    books = uiState.books,
+                    books = uiState.allBooks,
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.fillMaxWidth(),
-                    onBookClick = onBookClick
-                )
-            }
-
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                BookCarousel(
-                    books = uiState.books,
-                    windowSizeClass = windowSizeClass,
-                    modifier = Modifier.fillMaxWidth(),
-                    onBookClick = onBookClick
+                    onBookClick = { book ->
+                        navigationViewModel.navigateToFairyTale(navController, book.id, isFromBookshelf = true)
+                    }
                 )
             }
         }
@@ -158,9 +150,10 @@ fun ProfileIconButton(
     iconSize: Dp,
     textSize: TextUnit
 ) {
+    val profileImage = Res.drawable.boy_icon
     Column(verticalArrangement = Arrangement.Center) {
         Image(
-            painter = painterResource(resource = BookResources.profileImage),
+            painter = painterResource(resource = profileImage),
             contentDescription = "Profile Icon",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -207,7 +200,6 @@ fun MainTitle(
     }
 }
 
-// UI 요소들의 크기를 담는 데이터 클래스
 data class UiSizes(
     val profileIconSize: Dp,
     val profileTextSize: TextUnit,
@@ -216,5 +208,5 @@ data class UiSizes(
     val titleBottomPadding: Dp,
     val topPadding: Dp,
     val contentPadding: Dp,
-    val carouselTitleSize: TextUnit  // 추가
+    val carouselTitleSize: TextUnit
 )

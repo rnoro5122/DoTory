@@ -11,15 +11,19 @@ object NavigationConfig {
     const val TOPIC_SELECTION_SCREEN = "TopicSelectionScreen"
     const val BOOKSHELF_SCREEN = "BookShelfScreen"
 
-    private const val FAIRY_TALE_SCREEN = "FairyTaleScreen"
-    const val FAIRY_TALE_ROUTE = "$FAIRY_TALE_SCREEN/{topicId}"
+    const val FAIRY_TALE_ROUTE = "fairyTale/{topicId}?isFromBookshelf={isFromBookshelf}"
 
-    fun createFairyTaleRoute(topicId: String) = "$FAIRY_TALE_SCREEN/$topicId"
+    fun createFairyTaleRoute(topicId: String, isFromBookshelf: Boolean = false): String {
+        return "fairyTale/$topicId?isFromBookshelf=$isFromBookshelf"
+    }
 
     private const val ACTIVITY_RECORD_BASE = "activity_record"
     const val ACTIVITY_RECORD_ROUTE = "$ACTIVITY_RECORD_BASE/{storyId}"
 
+    const val STORY_COMPLETE_ROUTE = "StoryComplete/{storyId}"
+
     fun createActivityRecordRoute(storyId: String) = "$ACTIVITY_RECORD_BASE/$storyId"
+    fun createStoryCompleteRoute(storyId: String) = "StoryComplete/$storyId"
 
     // Labels
     const val LABEL_BOOKSHELF = "책장"

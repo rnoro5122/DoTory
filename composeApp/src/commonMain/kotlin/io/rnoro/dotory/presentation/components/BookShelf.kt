@@ -23,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.rnoro.dotory.domain.models.BookResources
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -38,17 +37,6 @@ fun BookShelf(
             .width(400.dp)
             .height(230.dp)
     ) {
-        Image(
-            painter = painterResource(
-                resource = BookResources.bookshelfImage
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .width(380.dp)
-                .height(200.dp)
-                .padding(horizontal = 5.dp)
-                .align(Alignment.BottomCenter),
-        )
         LazyRow(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -92,14 +80,6 @@ private fun BookItem(
                     modifier = Modifier
                         .width(107.dp)
                         .height(135.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Image(
-                    painter = painterResource(resource = BookResources.bookSideImage),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(110.dp)
-                        .height(140.dp),
                     contentScale = ContentScale.Crop
                 )
             }

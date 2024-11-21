@@ -1,5 +1,6 @@
 package io.rnoro.dotory.presentation.components
 
+import StoryBook
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.rnoro.dotory.domain.models.Book
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun BookCard(
-    book: Book,
+    book: StoryBook,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -32,8 +32,8 @@ fun BookCard(
             modifier = Modifier.padding(8.dp)
         ) {
             Image(
-                painter = painterResource(book.image),
-                contentDescription = null,
+                painter = painterResource(book.coverImage),
+                contentDescription = book.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -41,8 +41,10 @@ fun BookCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = book.name,
-                textAlign = TextAlign.Center
+                text = book.title,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }

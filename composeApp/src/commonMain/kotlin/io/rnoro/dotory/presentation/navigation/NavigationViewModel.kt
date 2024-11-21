@@ -41,12 +41,10 @@ class NavigationViewModel : ViewModel() {
         }
     }
 
-    fun navigateToFairyTale(navController: NavHostController, topicId: String) {
+    fun navigateToFairyTale(navController: NavHostController, storyId: String, isFromBookshelf: Boolean = false) {
         try {
-            val route = NavigationConfig.createFairyTaleRoute(topicId)
-
+            val route = NavigationConfig.createFairyTaleRoute(storyId, isFromBookshelf)
             navController.navigate(route)
-
         } catch (e: Exception) {
             println("❌ 네비게이션 실패: ${e.message}")
             e.printStackTrace()
@@ -55,11 +53,31 @@ class NavigationViewModel : ViewModel() {
 
     fun navigateToActivityRecord(navController: NavHostController, storyId: String) {
         try {
-            val route = createActivityRecordRoute(storyId)
+            val route = NavigationConfig.createActivityRecordRoute(storyId)
             navController.navigate(route)
         } catch (e: Exception) {
             println("❌ 활동 기록 네비게이션 실패: ${e.message}")
             e.printStackTrace()
+        }
+    }
+
+    fun navigateToStoryComplete(navController: NavHostController, storyId: String) {
+        try {
+            val route = NavigationConfig.createStoryCompleteRoute(storyId)
+            navController.navigate(route)
+        } catch (e: Exception) {
+            println("❌ 이야기 완성 네비게이션 실패: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    fun navigateToHome(navController: NavHostController) {
+        _selectedItem.value = 1  // 홈 아이템 선택 (인덱스가 1)
+        navController.navigate(NavigationConfig.MAIN_SCREEN) {
+            popUpTo(NavigationConfig.MAIN_SCREEN) {  // 네비게이션 스택 전체 제거
+                inclusive = true
+            }
+            launchSingleTop = true  // 중복 방지
         }
     }
 }

@@ -40,7 +40,7 @@ fun NavigationContent(
         NavigationRail(
             modifier = Modifier
                 .padding(vertical = 20.dp, horizontal = 8.dp)
-                .clip(RoundedCornerShape(30.dp)),
+                .clip(RoundedCornerShape(15.dp)),
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
         ) {
             Column(

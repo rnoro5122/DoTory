@@ -24,12 +24,13 @@ fun FairyTaleScreen(
     navigationViewModel: NavigationViewModel = viewModel(),
     storyId: String,
     onBackPressed: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    isFromBookshelf: Boolean = false  // 책장에서 열었는지 여부
 ) {
     var isLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(storyId) {
-        if (viewModel.loadStory(storyId)) {
+        if (viewModel.loadStory(storyId, isFromBookshelf)) {  // isFromBookshelf 파라미터 추가
             isLoaded = true
         } else {
             onBackPressed()
@@ -56,15 +57,18 @@ fun FairyTaleScreen(
                     }
                 },
                 actions = {
-                    Button(
-                        onClick = { navigationViewModel.navigateToActivityRecord(navController, storyId) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        modifier = Modifier.padding(end = 16.dp)
-                    ) {
-                        Text("활동 기록하기")
+                    // 책장에서 열었을 때는 활동 기록 버튼을 표시하지 않음
+                    if (!isFromBookshelf && !viewModel.hasCompletedActivity) {
+                        Button(
+                            onClick = { navigationViewModel.navigateToActivityRecord(navController, storyId) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier.padding(end = 16.dp)
+                        ) {
+                            Text("활동 기록하기")
+                        }
                     }
                 }
             )
@@ -134,7 +138,20 @@ fun FairyTaleScreen(
                             }
                         }
 
-                        if (viewModel.canGoToNextPage()) {
+                        if (viewModel.isLastPageAndActivityCompleted()) {
+                            Button(
+                                onClick = {
+                                    viewModel.completeStory()
+                                    navigationViewModel.navigateToStoryComplete(navController, storyId)
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                ),
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            ) {
+                                Text("이야기 완성하기")
+                            }
+                        } else if (viewModel.canGoToNextPage()) {
                             Button(
                                 onClick = { viewModel.goToNextPage() },
                                 modifier = Modifier.padding(start = 8.dp)

@@ -1,75 +1,49 @@
-package io.rnoro.dotory.presentation.screens.topicSelect
-
 import androidx.navigation.NavHostController
-import io.rnoro.dotory.domain.models.Topic
-import io.rnoro.dotory.domain.models.TopicResources
 import io.rnoro.dotory.presentation.navigation.NavigationViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-// TopicSelectionViewModel.kt
+data class TopicSelectionUiState(
+    val isLoading: Boolean = true,
+    val errorMessage: String? = null,
+    val genres: List<Genre> = emptyList()
+)
+
 class TopicSelectionViewModel(
     private val navigationViewModel: NavigationViewModel
 ) {
-    data class TopicSelectionUiState(
-        val topics: List<Topic> = emptyList(),
-        val isLoading: Boolean = false,
-        val selectedTopic: Topic? = null,
-        val errorMessage: String? = null
-    )
-
     private val _uiState = MutableStateFlow(TopicSelectionUiState())
     val uiState: StateFlow<TopicSelectionUiState> = _uiState.asStateFlow()
 
     init {
-        loadTopics()
+        loadGenres()
     }
 
-    fun selectTopic(navController: NavHostController, topic: Topic) {
-        println("TopicSelectionViewModel: Selecting topic ${topic.id}")
-        _uiState.update { it.copy(selectedTopic = topic) }
-        println("TopicSelectionViewModel: Calling navigateToFairyTale with ${topic.id}")
-        navigationViewModel.navigateToFairyTale(navController, topic.id)
-    }
-
-    fun retryLoadingTopics() {
-        loadTopics()
-    }
-
-    private fun loadTopics() {
-        _uiState.update { it.copy(isLoading = true) }
-
+    private fun loadGenres() {
         try {
-            val topics = TopicResources.allTopics
-            if (topics.isEmpty()) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "사용 가능한 주제가 없습니다."
-                    )
-                }
-            } else {
-                _uiState.update {
-                    it.copy(
-                        topics = topics,
-                        isLoading = false,
-                        errorMessage = null
-                    )
-                }
-            }
+            _uiState.value = TopicSelectionUiState(
+                isLoading = false,
+                genres = Genre.values().toList()
+            )
         } catch (e: Exception) {
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = "주제를 불러오는데 실패했습니다: ${e.message}"
-                )
-            }
+            _uiState.value = TopicSelectionUiState(
+                isLoading = false,
+                errorMessage = "장르를 불러오는데 실패했습니다: ${e.message}"
+            )
         }
     }
 
-    fun clearSelectedTopic() {
-        _uiState.update { it.copy(selectedTopic = null) }
+    fun retryLoadingGenres() {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        loadGenres()
+    }
+
+    fun selectGenre(navController: NavHostController, genre: Genre) {
+        val booksInGenre = StoryBookResources.allBooks.filter { it.genre == genre }
+        if (booksInGenre.isNotEmpty()) {
+            val randomBook = booksInGenre.random()
+            navigationViewModel.navigateToFairyTale(navController, randomBook.id)
+        }
     }
 }
