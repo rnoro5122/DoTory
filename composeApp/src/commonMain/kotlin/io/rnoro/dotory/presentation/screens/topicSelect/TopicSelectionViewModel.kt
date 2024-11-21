@@ -39,11 +39,32 @@ class TopicSelectionViewModel(
         loadGenres()
     }
 
+    private val _isLlmModeEnabled = MutableStateFlow(false)
+    val isLlmModeEnabled: StateFlow<Boolean> = _isLlmModeEnabled.asStateFlow()
+
+    fun toggleLlmMode() {
+        _isLlmModeEnabled.value = !_isLlmModeEnabled.value
+    }
+
     fun selectGenre(navController: NavHostController, genre: Genre) {
-        val booksInGenre = StoryBookResources.allBooks.filter { it.genre == genre }
-        if (booksInGenre.isNotEmpty()) {
-            val randomBook = booksInGenre.random()
-            navigationViewModel.navigateToFairyTale(navController, randomBook.id)
+        if (_isLlmModeEnabled.value) {
+            // LLM 모드일 때는 장르 이름만 전달
+            navigationViewModel.navigateToFairyTale(
+                navController = navController,
+                storyId = genre.name, // 또는 적절한 식별자
+                isLlmMode = true,
+                topic = genre.displayName
+            )
+        } else {
+            // 일반 모드일 때는 기존 로직 유지
+            val booksInGenre = StoryBookResources.allBooks.filter { it.genre == genre }
+            if (booksInGenre.isNotEmpty()) {
+                val randomBook = booksInGenre.random()
+                navigationViewModel.navigateToFairyTale(
+                    navController = navController,
+                    storyId = randomBook.id
+                )
+            }
         }
     }
 }

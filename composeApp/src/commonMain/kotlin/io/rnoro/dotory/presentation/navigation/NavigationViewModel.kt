@@ -41,9 +41,20 @@ class NavigationViewModel : ViewModel() {
         }
     }
 
-    fun navigateToFairyTale(navController: NavHostController, storyId: String, isFromBookshelf: Boolean = false) {
+    fun navigateToFairyTale(
+        navController: NavHostController,
+        storyId: String,
+        isFromBookshelf: Boolean = false,
+        isLlmMode: Boolean = false,
+        topic: String? = null
+    ) {
         try {
-            val route = NavigationConfig.createFairyTaleRoute(storyId, isFromBookshelf)
+            val route = NavigationConfig.createFairyTaleRoute(
+                topicId = storyId,
+                isFromBookshelf = isFromBookshelf,
+                isLlmMode = isLlmMode,
+                topic = topic
+            )
             navController.navigate(route)
         } catch (e: Exception) {
             println("❌ 네비게이션 실패: ${e.message}")

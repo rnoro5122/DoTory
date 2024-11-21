@@ -1,5 +1,6 @@
 package io.rnoro.dotory.presentation.screens.fairyTale
 
+import StoryBook
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,12 +27,14 @@ fun FairyTaleScreen(
     storyId: String,
     onBackPressed: () -> Unit,
     navController: NavHostController,
-    isFromBookshelf: Boolean = false  // 책장에서 열었는지 여부
+    isFromBookshelf: Boolean = false,
+    isLlmMode: Boolean = false,
+    topic: String? = null
 ) {
     var isLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(storyId) {
-        if (viewModel.loadStory(storyId, isFromBookshelf)) {  // isFromBookshelf 파라미터 추가
+        if (viewModel.loadStory(storyId, isFromBookshelf, isLlmMode, topic)) {
             isLoaded = true
         } else {
             onBackPressed()
@@ -44,6 +48,35 @@ fun FairyTaleScreen(
         return
     }
 
+    if (viewModel.isLlmMode) {
+        LlmModeContent(
+            displayedText = viewModel.displayedText,
+            isLoading = viewModel.isLoading,
+            onBackPressed = onBackPressed,
+            navController = navController,
+            navigationViewModel = navigationViewModel,
+            storyId = storyId
+        )
+    } else {
+        RegularModeContent(
+            viewModel = viewModel,
+            navigationViewModel = navigationViewModel,
+            navController = navController,
+            onBackPressed = onBackPressed,
+            isFromBookshelf = isFromBookshelf
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RegularModeContent(
+    viewModel: FairyTaleViewModel,
+    navigationViewModel: NavigationViewModel,
+    navController: NavHostController,
+    onBackPressed: () -> Unit,
+    isFromBookshelf: Boolean
+) {
     val currentPage = viewModel.getCurrentPage() ?: return
     val storyBook = viewModel.getCurrentStoryBook() ?: return
 
@@ -57,10 +90,9 @@ fun FairyTaleScreen(
                     }
                 },
                 actions = {
-                    // 책장에서 열었을 때는 활동 기록 버튼을 표시하지 않음
                     if (!isFromBookshelf && !viewModel.hasCompletedActivity) {
                         Button(
-                            onClick = { navigationViewModel.navigateToActivityRecord(navController, storyId) },
+                            onClick = { navigationViewModel.navigateToActivityRecord(navController, storyBook.id) },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -120,45 +152,147 @@ fun FairyTaleScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        if (viewModel.canGoToPreviousPage()) {
-                            Button(
-                                onClick = { viewModel.goToPreviousPage() },
-                                modifier = Modifier.padding(end = 8.dp)
-                            ) {
-                                Icon(Icons.Default.ArrowBack, contentDescription = "이전 페이지")
-                                Spacer(Modifier.width(8.dp))
-                                Text("이전")
-                            }
-                        }
+                    NavigationButtons(
+                        viewModel = viewModel,
+                        navigationViewModel = navigationViewModel,
+                        navController = navController,
+                        storyBook = storyBook
+                    )
+                }
+            }
+        }
+    }
+}
 
-                        if (viewModel.isLastPageAndActivityCompleted()) {
+@Composable
+private fun NavigationButtons(
+    viewModel: FairyTaleViewModel,
+    navigationViewModel: NavigationViewModel,
+    navController: NavHostController,
+    storyBook: StoryBook
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        if (viewModel.canGoToPreviousPage()) {
+            Button(
+                onClick = { viewModel.goToPreviousPage() },
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "이전 페이지")
+                Spacer(Modifier.width(8.dp))
+                Text("이전")
+            }
+        }
+
+        if (viewModel.isLastPageAndActivityCompleted()) {
+            Button(
+                onClick = {
+                    viewModel.completeStory()
+                    navigationViewModel.navigateToStoryComplete(navController, storyBook.id)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Text("이야기 완성하기")
+            }
+        } else if (viewModel.canGoToNextPage()) {
+            Button(
+                onClick = { viewModel.goToNextPage() },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Text("다음")
+                Spacer(Modifier.width(8.dp))
+                Icon(Icons.Default.ArrowForward, contentDescription = "다음 페이지")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LlmModeContent(
+    displayedText: String,
+    isLoading: Boolean,
+    onBackPressed: () -> Unit,
+    navController: NavHostController,
+    navigationViewModel: NavigationViewModel,
+    storyId: String,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("AI 동화") },
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            if (isLoading) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "이야기 생성 중",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = displayedText,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 30.sp,
+                            lineHeight = 40.sp
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // 이야기가 생성되고 "WAITING_FOR_PHOTO"가 포함되어 있다면 활동 기록 버튼 표시
+                    if (displayedText.contains("WAITING_FOR_PHOTO", ignoreCase = true)) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Button(
                                 onClick = {
-                                    viewModel.completeStory()
-                                    navigationViewModel.navigateToStoryComplete(navController, storyId)
+                                    navigationViewModel.navigateToActivityRecord(
+                                        navController,
+                                        storyId
+                                    )
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                ),
-                                modifier = Modifier.padding(horizontal = 8.dp)
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
                             ) {
-                                Text("이야기 완성하기")
-                            }
-                        } else if (viewModel.canGoToNextPage()) {
-                            Button(
-                                onClick = { viewModel.goToNextPage() },
-                                modifier = Modifier.padding(start = 8.dp)
-                            ) {
-                                Text("다음")
-                                Spacer(Modifier.width(8.dp))
-                                Icon(Icons.Default.ArrowForward, contentDescription = "다음 페이지")
+                                Text("활동 기록하기")
                             }
                         }
                     }

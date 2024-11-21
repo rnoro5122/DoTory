@@ -11,10 +11,20 @@ object NavigationConfig {
     const val TOPIC_SELECTION_SCREEN = "TopicSelectionScreen"
     const val BOOKSHELF_SCREEN = "BookShelfScreen"
 
-    const val FAIRY_TALE_ROUTE = "fairyTale/{topicId}?isFromBookshelf={isFromBookshelf}"
+    const val FAIRY_TALE_ROUTE = "fairy_tale/{topicId}?isFromBookshelf={isFromBookshelf}&isLlmMode={isLlmMode}&topic={topic}"
 
-    fun createFairyTaleRoute(topicId: String, isFromBookshelf: Boolean = false): String {
-        return "fairyTale/$topicId?isFromBookshelf=$isFromBookshelf"
+    fun createFairyTaleRoute(
+        topicId: String,
+        isFromBookshelf: Boolean = false,
+        isLlmMode: Boolean = false,
+        topic: String? = null
+    ): String {
+        return buildString {
+            append("fairy_tale/$topicId")
+            append("?isFromBookshelf=$isFromBookshelf")
+            append("&isLlmMode=$isLlmMode")
+            append("&topic=${topic?.replace(" ", "_") ?: ""}")
+        }
     }
 
     private const val ACTIVITY_RECORD_BASE = "activity_record"

@@ -50,30 +50,55 @@ fun TopicSelectionContent(
     navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isLlmModeEnabled by viewModel.isLlmModeEnabled.collectAsState()
 
-    when {
-        uiState.isLoading -> LoadingScreen()
-        uiState.errorMessage != null -> ErrorScreen(
-            errorMessage = uiState.errorMessage!!,
-            onRetry = viewModel::retryLoadingGenres
-        )
-        uiState.genres.isEmpty() -> ErrorScreen(
-            errorMessage = "사용 가능한 장르가 없습니다.",
-            onRetry = viewModel::retryLoadingGenres
-        )
-        else -> when (windowSizeClass.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> CompactLayout(
-                genres = uiState.genres,
-                onGenreSelected = { genre ->
-                    viewModel.selectGenre(navController, genre)
-                }
+    Column {
+        // Add LLM mode toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "AI 동화 모드",
+                style = MaterialTheme.typography.bodyLarge
             )
-            else -> ExpandedLayout(
-                genres = uiState.genres,
-                onGenreSelected = { genre ->
-                    viewModel.selectGenre(navController, genre)
-                }
+            Switch(
+                checked = isLlmModeEnabled,
+                onCheckedChange = { viewModel.toggleLlmMode() },
+                modifier = Modifier.padding(start = 8.dp)
             )
+        }
+
+        when {
+            uiState.isLoading -> LoadingScreen()
+            uiState.errorMessage != null -> ErrorScreen(
+                errorMessage = uiState.errorMessage!!,
+                onRetry = viewModel::retryLoadingGenres
+            )
+
+            uiState.genres.isEmpty() -> ErrorScreen(
+                errorMessage = "사용 가능한 장르가 없습니다.",
+                onRetry = viewModel::retryLoadingGenres
+            )
+
+            else -> when (windowSizeClass.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> CompactLayout(
+                    genres = uiState.genres,
+                    onGenreSelected = { genre ->
+                        viewModel.selectGenre(navController, genre)
+                    }
+                )
+
+                else -> ExpandedLayout(
+                    genres = uiState.genres,
+                    onGenreSelected = { genre ->
+                        viewModel.selectGenre(navController, genre)
+                    }
+                )
+            }
         }
     }
 }

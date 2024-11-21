@@ -93,63 +93,100 @@ fun AppNavigation(
                 }
 
                 composable(
-                    route = NavigationConfig.TOPIC_SELECTION_SCREEN,
-                    enterTransition = {
-                        // Main -> TopicSelection (TopicSelection이 아래에서 위로 밀고 올라옴)
-                        slideInVertically(
-                            initialOffsetY = { it },
-                            animationSpec = tween(300)
-                        )
-                    },
-                    exitTransition = {
-                        // TopicSelection -> Main (TopicSelection이 아래로 밀려 내려감)
-                        slideOutVertically(
-                            targetOffsetY = { it },
-                            animationSpec = tween(300)
-                        )
-                    }
-                ) {
-                    TopicSelectionScreen(
-                        navigationViewModel = viewModel,
-                        navController = navController
-                    )
-                }
-
-                composable(
                     route = NavigationConfig.BOOKSHELF_SCREEN,
                     enterTransition = {
-                        // Main -> Bookshelf (Bookshelf가 위에서 아래로 밀고 내려옴)
-                        slideInVertically(
-                            initialOffsetY = { -it },
-                            animationSpec = tween(300)
-                        )
+                        // FairyTale과 관련된 전환이 아닐 때만 애니메이션 적용
+                        if (!initialState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!! &&
+                            !targetState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!!) {
+                            slideInVertically(
+                                initialOffsetY = { -it },
+                                animationSpec = tween(300)
+                            )
+                        } else {
+                            null
+                        }
                     },
                     exitTransition = {
-                        // Bookshelf -> Main (Bookshelf가 위로 밀려나감)
-                        slideOutVertically(
-                            targetOffsetY = { -it },
-                            animationSpec = tween(300)
-                        )
+                        // FairyTale과 관련된 전환이 아닐 때만 애니메이션 적용
+                        if (!initialState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!! &&
+                            !targetState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!!) {
+                            slideOutVertically(
+                                targetOffsetY = { -it },
+                                animationSpec = tween(300)
+                            )
+                        } else {
+                            null
+                        }
                     }
                 ) {
                     BookShelfScreen(navController = navController, navigationViewModel = viewModel)
                 }
 
+                // TopicSelection 화면
+                composable(
+                    route = NavigationConfig.TOPIC_SELECTION_SCREEN,
+                    enterTransition = {
+                        // FairyTale과 관련된 전환이 아닐 때만 애니메이션 적용
+                        if (!initialState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!! &&
+                            !targetState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!!) {
+                            slideInVertically(
+                                initialOffsetY = { it },
+                                animationSpec = tween(300)
+                            )
+                        } else {
+                            null
+                        }
+                    },
+                    exitTransition = {
+                        // FairyTale과 관련된 전환이 아닐 때만 애니메이션 적용
+                        if (!initialState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!! &&
+                            !targetState.destination.route?.startsWith(NavigationConfig.FAIRY_TALE_ROUTE)!!) {
+                            slideOutVertically(
+                                targetOffsetY = { it },
+                                animationSpec = tween(300)
+                            )
+                        } else {
+                            null
+                        }
+                    }
+                ) {
+                    TopicSelectionScreen(navigationViewModel = viewModel, navController = navController)
+                }
+
+                // FairyTale 화면
                 composable(
                     route = NavigationConfig.FAIRY_TALE_ROUTE,
                     arguments = listOf(
-                        navArgument("topicId") {
-                            type = NavType.StringType
-                            nullable = false
-                        },
+                        navArgument("topicId") { type = NavType.StringType },
                         navArgument("isFromBookshelf") {
                             type = NavType.BoolType
                             defaultValue = false
+                        },
+                        navArgument("isLlmMode") {
+                            type = NavType.BoolType
+                            defaultValue = false
+                        },
+                        navArgument("topic") {
+                            type = NavType.StringType
+                            defaultValue = ""
+                            nullable = true
                         }
-                    )
+                    ),
+                    enterTransition = {
+                        androidx.compose.animation.fadeIn(
+                            animationSpec = tween(300)
+                        )
+                    },
+                    exitTransition = {
+                        androidx.compose.animation.fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    }
                 ) { entry ->
                     val topicId = requireNotNull(entry.arguments?.getString("topicId"))
                     val isFromBookshelf = entry.arguments?.getBoolean("isFromBookshelf") ?: false
+                    val isLlmMode = entry.arguments?.getBoolean("isLlmMode") ?: false
+                    val topic = entry.arguments?.getString("topic")?.replace("_", " ")
                     val fairyTaleViewModel: FairyTaleViewModel = viewModel()
 
                     FairyTaleScreen(
@@ -157,17 +194,30 @@ fun AppNavigation(
                         storyId = topicId,
                         onBackPressed = { navController.popBackStack() },
                         navController = navController,
-                        isFromBookshelf = isFromBookshelf
+                        isFromBookshelf = isFromBookshelf,
+                        isLlmMode = isLlmMode,
+                        topic = topic
                     )
                 }
 
+                // ActivityRecord와 StoryComplete도 동일한 페이드 효과 적용
                 composable(
-                    route = NavigationConfig.ACTIVITY_RECORD_ROUTE,  // 정확히 동일한 라우트 사용
+                    route = NavigationConfig.ACTIVITY_RECORD_ROUTE,
                     arguments = listOf(
                         navArgument("storyId") {
                             type = NavType.StringType
                         }
-                    )
+                    ),
+                    enterTransition = {
+                        androidx.compose.animation.fadeIn(
+                            animationSpec = tween(300)
+                        )
+                    },
+                    exitTransition = {
+                        androidx.compose.animation.fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    }
                 ) { backStackEntry ->
                     val storyId = requireNotNull(backStackEntry.arguments?.getString("storyId"))
                     val parentEntry = remember(backStackEntry) {
@@ -176,7 +226,7 @@ fun AppNavigation(
                     val fairyTaleViewModel: FairyTaleViewModel = viewModel(parentEntry)
 
                     ActivityRecordScreen(
-                        viewModel = fairyTaleViewModel,
+                        fairyTaleViewModel = fairyTaleViewModel,
                         navController = navController
                     )
                 }
@@ -187,7 +237,17 @@ fun AppNavigation(
                         navArgument("storyId") {
                             type = NavType.StringType
                         }
-                    )
+                    ),
+                    enterTransition = {
+                        androidx.compose.animation.fadeIn(
+                            animationSpec = tween(300)
+                        )
+                    },
+                    exitTransition = {
+                        androidx.compose.animation.fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    }
                 ) { backStackEntry ->
                     val storyId = requireNotNull(backStackEntry.arguments?.getString("storyId"))
                     val parentEntry = remember(backStackEntry) {
@@ -197,7 +257,7 @@ fun AppNavigation(
 
                     StoryCompleteScreen(
                         viewModel = fairyTaleViewModel,
-                        navigationViewModel = viewModel,  // NavigationViewModel 전달
+                        navigationViewModel = viewModel,
                         navController = navController,
                         storyId = storyId
                     )
