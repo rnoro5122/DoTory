@@ -52,6 +52,7 @@ fun FairyTaleScreen(
         LlmModeContent(
             displayedText = viewModel.displayedText,
             isLoading = viewModel.isLoading,
+            isGenerationCompleted = viewModel.isGenerationCompleted,  // 새로운 상태 전달
             onBackPressed = onBackPressed,
             navController = navController,
             navigationViewModel = navigationViewModel,
@@ -102,7 +103,7 @@ private fun RegularModeContent(
                             Text("활동 기록하기")
                         }
                     }
-                }
+                },
             )
         }
     ) { padding ->
@@ -220,6 +221,7 @@ private fun NavigationButtons(
 private fun LlmModeContent(
     displayedText: String,
     isLoading: Boolean,
+    isGenerationCompleted: Boolean,  // 새로운 파라미터 추가
     onBackPressed: () -> Unit,
     navController: NavHostController,
     navigationViewModel: NavigationViewModel,
@@ -232,6 +234,25 @@ private fun LlmModeContent(
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기")
+                    }
+                },
+                actions = {
+                    if (isGenerationCompleted) {  // 생성이 완료되면 버튼 표시
+                        Button(
+                            onClick = {
+                                navigationViewModel.navigateToActivityRecord(
+                                    navController,
+                                    storyId
+                                )
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier.padding(end = 16.dp)
+                        ) {
+                            Text("활동 기록하기")
+                        }
                     }
                 }
             )
@@ -257,46 +278,16 @@ private fun LlmModeContent(
                     )
                 }
             } else {
-                Column(
+                Text(
+                    text = displayedText,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 30.sp,
+                        lineHeight = 40.sp
+                    ),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = displayedText,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 30.sp,
-                            lineHeight = 40.sp
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    // 이야기가 생성되고 "WAITING_FOR_PHOTO"가 포함되어 있다면 활동 기록 버튼 표시
-                    if (displayedText.contains("WAITING_FOR_PHOTO", ignoreCase = true)) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Button(
-                                onClick = {
-                                    navigationViewModel.navigateToActivityRecord(
-                                        navController,
-                                        storyId
-                                    )
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            ) {
-                                Text("활동 기록하기")
-                            }
-                        }
-                    }
-                }
+                        .padding(24.dp)
+                )
             }
         }
     }

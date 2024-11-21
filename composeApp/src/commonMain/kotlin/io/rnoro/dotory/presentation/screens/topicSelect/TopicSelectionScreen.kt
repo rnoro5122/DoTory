@@ -21,6 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import dotory.composeapp.generated.resources.Res
+import dotory.composeapp.generated.resources.book_creation
 import io.rnoro.dotory.presentation.navigation.NavigationViewModel
 import org.jetbrains.compose.resources.painterResource
 
@@ -175,11 +177,12 @@ private fun CompactLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .padding(vertical = 16.dp)  // 상하 여백 추가
         ) {
             Image(
-                painter = painterResource(genres.first().imageResource),
+                painter = painterResource(resource = Res.drawable.book_creation),
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Crop,  // FillBounds 대신 Fit 사용
                 modifier = Modifier.fillMaxSize()
             )
             Box(
@@ -189,8 +192,9 @@ private fun CompactLayout(
             )
             Column(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(24.dp)
+                    .align(Alignment.Center)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "어떤 이야기를 만들까요?",
@@ -245,34 +249,39 @@ private fun ExpandedLayout(
     Row(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .weight(1f)
-                .fillMaxHeight()
+                .padding(vertical = 16.dp)
         ) {
-            Image(
-                painter = painterResource(genres.first().imageResource),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.4f))
-            )
+            Box {  // Image와 overlay를 함께 묶는 컨테이너
+                Image(
+                    painter = painterResource(resource = Res.drawable.book_creation),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()  // 부모(Image)와 동일한 크기로 설정
+                        .background(Color.Black.copy(alpha = 0.4f))
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(32.dp)
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "어떤 이야기를 만들까요?",
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "원하는 장르를 선택해주세요",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.8f)
                 )
             }

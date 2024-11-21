@@ -11,7 +11,7 @@ data class TopicSelectionUiState(
 )
 
 class TopicSelectionViewModel(
-    private val navigationViewModel: NavigationViewModel
+    private val navigationViewModel: NavigationViewModel,
 ) {
     private val _uiState = MutableStateFlow(TopicSelectionUiState())
     val uiState: StateFlow<TopicSelectionUiState> = _uiState.asStateFlow()

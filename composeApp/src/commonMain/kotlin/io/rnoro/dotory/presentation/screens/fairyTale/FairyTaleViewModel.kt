@@ -43,6 +43,9 @@ class FairyTaleViewModel : ViewModel() {
     var isLoading by mutableStateOf(true)
         private set
 
+    var isGenerationCompleted by mutableStateOf(false)
+        private set
+
     fun loadStory(
         storyId: String,
         isFromBookshelf: Boolean = false,
@@ -81,6 +84,7 @@ class FairyTaleViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             displayedText = "" // 텍스트 초기화
+            isGenerationCompleted = false  // 생성 시작 시 false로 설정
 
             try {
                 withContext(Dispatchers.IO) {
@@ -107,6 +111,7 @@ class FairyTaleViewModel : ViewModel() {
                         displayedText += text
                     }
                 }
+                isGenerationCompleted = true  // 생성 완료 시 true로 설정
             } catch (e: Exception) {
                 isLoading = false
                 displayedText = "이야기를 생성하는 중 오류가 발생했습니다: ${e.message}"

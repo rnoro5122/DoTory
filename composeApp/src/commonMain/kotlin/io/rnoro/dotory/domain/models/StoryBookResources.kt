@@ -67,43 +67,37 @@ enum class Genre(
     ADVENTURE(
         displayName = "모험",
         description = "자연과 함께하는 신나는 모험을 떠나보아요",
-        imageResource = Res.drawable.book_fantasy1,
+        imageResource = Res.drawable.adventure_creation,
         subTopics = listOf("숲 속 탐험", "바다 모험", "산 정복하기", "동물 친구들과의 여행")
     ),
     ENVIRONMENT(
         displayName = "환경보호",
         description = "지구를 지키는 특별한 이야기를 만들어보아요",
-        imageResource = Res.drawable.book_classic1,
+        imageResource = Res.drawable.environment_creation,
         subTopics = listOf("분리수거 대작전", "플라스틱 없는 하루", "에너지 절약 일기", "깨끗한 지구 만들기")
-    ),
-    FAMILY(
-        displayName = "가족",
-        description = "가족과 함께하는 따뜻한 이야기를 만들어보아요",
-        imageResource = Res.drawable.book_family1,
-        subTopics = listOf("가족 캠핑", "친환경 식사", "환경 지킴이 가족", "주말 농장 체험")
     ),
     FANTASY(
         displayName = "판타지",
         description = "마법의 힘으로 환경을 지켜보아요",
-        imageResource = Res.drawable.book_fantasy3,
+        imageResource = Res.drawable.fantasy_creation,
         subTopics = listOf("마법의 재활용", "환경 지킴이 마법사", "요정들의 숲", "생명의 나무 이야기")
     ),
     CLASSIC(
         displayName = "고전",
         description = "시간이 지나도 변하지 않는 이야기",
-        imageResource = Res.drawable.book_classic2,
+        imageResource = Res.drawable.classic_creation,
         subTopics = listOf("역사적 배경", "교훈적인 이야기", "문학적 가치")
     ),
     HORROR(
         displayName = "공포",
         description = "등골이 서늘해지는 이야기",
-        imageResource = Res.drawable.book_fantasy4,
+        imageResource = Res.drawable.horror_creation,
         subTopics = listOf("유령의 숲", "공포의 성", "사라진 마을")
     ),
     COMEDY(
         displayName = "코미디",
         description = "웃음과 재미가 가득한 이야기",
-        imageResource = Res.drawable.book_classic3,
+        imageResource = Res.drawable.comedy_creation,
         subTopics = listOf("웃음 가득한 하루", "장난꾸러기 모험", "예기치 못한 유머")
     );
 }

@@ -38,7 +38,7 @@ object NavigationConfig {
     // Labels
     const val LABEL_BOOKSHELF = "책장"
     const val LABEL_HOME = "홈"
-    const val LABEL_CREATE_STORY = "이야기 생성"
+    const val LABEL_CREATE_STORY = "만들기"
 
     // Icons
     val ICON_BOOKSHELF = Res.drawable.bookshelf_icon
