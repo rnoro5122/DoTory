@@ -84,11 +84,11 @@ chaquopy {
 }
 
 android {
-    namespace = "compose.project.dotory"
+    namespace = "io.rnoro.dotory"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "compose.project.dotory"
+        applicationId = "io.rnoro.dotory"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
