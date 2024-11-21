@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,9 @@ fun TopicSelectionScreen(
     navController: NavHostController,
 ) {
     WindowSizeWrapper { windowSizeClass ->
-        val viewModel = remember { TopicSelectionViewModel(navigationViewModel) }
+        val viewModel = remember {
+            TopicSelectionViewModel(navigationViewModel)
+        }
 
         TopicSelectionContent(
             windowSizeClass = windowSizeClass,
@@ -64,7 +67,7 @@ fun TopicSelectionContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "AI 동화 모드",
+                text = "On-Device-LLM 모드",
                 style = MaterialTheme.typography.bodyLarge
             )
             Switch(

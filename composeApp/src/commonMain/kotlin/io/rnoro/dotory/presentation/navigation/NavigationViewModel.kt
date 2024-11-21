@@ -11,6 +11,13 @@ class NavigationViewModel : ViewModel() {
     private val _selectedItem = MutableStateFlow(1)
     val selectedItem = _selectedItem.asStateFlow()
 
+    private val _isLlmModeEnabled = MutableStateFlow(false)
+    val isLlmModeEnabled = _isLlmModeEnabled.asStateFlow()
+
+    fun toggleLlmMode(enabled: Boolean) {
+        _isLlmModeEnabled.value = enabled
+    }
+
     val navigationItems = listOf(
         NavigationItem(
             icon = NavigationConfig.ICON_BOOKSHELF,
