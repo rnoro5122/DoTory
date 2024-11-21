@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -55,7 +56,6 @@ fun MainScreenContent(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // 화면 크기에 따른 UI 요소 크기 설정
     val uiSizes = when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> UiSizes(
             profileIconSize = 48.dp,
@@ -64,7 +64,8 @@ fun MainScreenContent(
             mainTitleSize = 32.sp,
             titleBottomPadding = 8.dp,
             topPadding = 16.dp,
-            contentPadding = 12.dp
+            contentPadding = 12.dp,
+            carouselTitleSize = 16.sp  // 추가
         )
         WindowWidthSizeClass.Medium -> UiSizes(
             profileIconSize = 56.dp,
@@ -73,7 +74,8 @@ fun MainScreenContent(
             mainTitleSize = 36.sp,
             titleBottomPadding = 12.dp,
             topPadding = 20.dp,
-            contentPadding = 16.dp
+            contentPadding = 16.dp,
+            carouselTitleSize = 18.sp  // 추가
         )
         else -> UiSizes(
             profileIconSize = 64.dp,
@@ -82,7 +84,8 @@ fun MainScreenContent(
             mainTitleSize = 40.sp,
             titleBottomPadding = 16.dp,
             topPadding = 40.dp,
-            contentPadding = 30.dp
+            contentPadding = 30.dp,
+            carouselTitleSize = 20.sp  // 추가
         )
     }
 
@@ -109,6 +112,29 @@ fun MainScreenContent(
                     fontSizeSubTitle = uiSizes.subTitleSize,
                     fontSizeMainTitle = uiSizes.mainTitleSize,
                     bottomPadding = uiSizes.titleBottomPadding
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = "최근에 한경님이 만들었던 책들이예요!",
+                    fontSize = uiSizes.carouselTitleSize,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .padding(horizontal = uiSizes.contentPadding),
+                    textAlign = TextAlign.Center
+                )
+                BookCarousel(
+                    books = uiState.books,
+                    windowSizeClass = windowSizeClass,
+                    modifier = Modifier.fillMaxWidth(),
+                    onBookClick = onBookClick
                 )
             }
 
@@ -189,5 +215,6 @@ data class UiSizes(
     val mainTitleSize: TextUnit,
     val titleBottomPadding: Dp,
     val topPadding: Dp,
-    val contentPadding: Dp
+    val contentPadding: Dp,
+    val carouselTitleSize: TextUnit  // 추가
 )
