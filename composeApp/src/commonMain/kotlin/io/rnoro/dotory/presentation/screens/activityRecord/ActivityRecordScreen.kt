@@ -92,8 +92,8 @@ fun ActivityRecordScreen(
 
         // 오른쪽 영역: 설명 입력
         DescriptionSection(
-            description = activityRecordViewModel.description,
-            onDescriptionChange = { activityRecordViewModel.updateDescription(it) },
+            description = ActivityRecordViewModel.description,
+            onDescriptionChange = { ActivityRecordViewModel.updateDescription(it) },
             onSave = {
                 activityRecordViewModel.saveActivityRecord(
                     onComplete = { navController.popBackStack() },

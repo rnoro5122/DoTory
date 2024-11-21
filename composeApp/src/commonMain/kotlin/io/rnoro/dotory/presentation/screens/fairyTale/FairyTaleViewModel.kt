@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.rnoro.dotory.presentation.screens.activityRecord.ActivityRecordViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -94,14 +95,19 @@ class FairyTaleViewModel : ViewModel() {
 
                 val userInfo = UserInfo(
                     name = "한경",
-                    gender = "여자"
+                    gender = "boy"
                 )
 
                 withContext(Dispatchers.IO) {
                     val part = if (hasCompletedActivity) 2 else 1
-                    val prompt = """
-                        Start generating PART $part of a story about $topic, under the circumstances - Main Character: '${userInfo.name}' (${userInfo.gender}).
-                    """.trimIndent()
+                    var prompt = "Start generating PART $part of a story about $topic, under the circumstances - "
+                    prompt += if (!hasCompletedActivity) {
+                        "Main Character: '${userInfo.name}' (${userInfo.gender})"
+                    } else {
+                        val description = ActivityRecordViewModel.description
+                        ActivityRecordViewModel.updateDescription("")
+                        "User Action: $description"
+                    }
 
                     runLlama(prompt, reset = !hasCompletedActivity) { text ->
                         displayedText += text

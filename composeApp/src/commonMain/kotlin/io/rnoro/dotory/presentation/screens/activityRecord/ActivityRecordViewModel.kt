@@ -8,11 +8,18 @@ import androidx.lifecycle.viewModelScope
 import io.rnoro.dotory.presentation.screens.fairyTale.FairyTaleViewModel
 import kotlinx.coroutines.launch
 
+
 class ActivityRecordViewModel : ViewModel() {
+    companion object {
+        var description by mutableStateOf("")
+            private set
+
+        fun updateDescription(text: String) {
+            description = text
+        }
+    }
+
     var imageByteArray by mutableStateOf<ByteArray?>(null)
-        private set
-        
-    var description by mutableStateOf("")
         private set
         
     var isLoading by mutableStateOf(false)
@@ -20,10 +27,6 @@ class ActivityRecordViewModel : ViewModel() {
 
     fun updateImage(bytes: ByteArray?) {
         imageByteArray = bytes
-    }
-
-    fun updateDescription(text: String) {
-        description = text
     }
 
     fun saveActivityRecord(

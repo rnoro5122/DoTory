@@ -25,3 +25,7 @@ def run_llama3(prompt: str, printer: callable = lambda x: print(x, end="", flush
     printer("\n")
     chat_history.append("assistant", chunks)
     print("Done!")
+
+
+run_llama3("안녕?")
+chat_history = ChatHistory()
