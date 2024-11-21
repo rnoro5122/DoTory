@@ -1,9 +1,9 @@
 package io.rnoro.dotory.presentation.navigation
 
 import dotory.composeapp.generated.resources.Res
-import dotory.composeapp.generated.resources.bookshelf_icon
-import dotory.composeapp.generated.resources.tree_icon
-import dotory.composeapp.generated.resources.write_icon
+import dotory.composeapp.generated.resources.archive_fill
+import dotory.composeapp.generated.resources.collection_fill
+import dotory.composeapp.generated.resources.lightbulb_fill
 
 object NavigationConfig {
     // Routes
@@ -41,9 +41,9 @@ object NavigationConfig {
     const val LABEL_CREATE_STORY = "만들기"
 
     // Icons
-    val ICON_BOOKSHELF = Res.drawable.bookshelf_icon
-    val ICON_HOME = Res.drawable.tree_icon
-    val ICON_CREATE_STORY = Res.drawable.write_icon
+    val ICON_BOOKSHELF = Res.drawable.archive_fill
+    val ICON_HOME = Res.drawable.collection_fill
+    val ICON_CREATE_STORY = Res.drawable.lightbulb_fill
 
     // Bottom Nav Screens
     val BOTTOM_NAV_SCREENS = listOf(

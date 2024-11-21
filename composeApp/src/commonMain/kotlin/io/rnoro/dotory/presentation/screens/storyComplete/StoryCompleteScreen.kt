@@ -56,22 +56,22 @@ fun StoryCompleteScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(24.dp),  // 32.dp에서 24.dp로 줄임
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "이야기 완성!",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 48.dp)
+            modifier = Modifier.padding(bottom = 32.dp)  // 48.dp에서 32.dp로 줄임
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(500.dp)
-                .padding(horizontal = 32.dp),
-            horizontalArrangement = Arrangement.spacedBy(48.dp)
+                .weight(1f)  // height 대신 weight 사용
+                .padding(horizontal = 24.dp),  // 32.dp에서 24.dp로 줄임
+            horizontalArrangement = Arrangement.spacedBy(32.dp)  // 48.dp에서 32.dp로 줄임
         ) {
             // 왼쪽: 책 표지
             Card(
@@ -96,58 +96,63 @@ fun StoryCompleteScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(32.dp)
+                verticalArrangement = Arrangement.SpaceBetween  // spacedBy 대신 SpaceBetween 사용
             ) {
-                // 제목 입력
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("이야기 제목") },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.headlineSmall,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                    )
-                )
-
-                // 별점 평가
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
-                    Text(
-                        "이야기는 어땠나요?",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                    // 제목 입력
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text("이야기 제목") },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = MaterialTheme.typography.headlineSmall,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                        )
                     )
-                    
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
+
+                    // 별점 평가
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        repeat(5) { index ->
-                            IconButton(
-                                onClick = { rating = index + 1 },
-                                modifier = Modifier.size(48.dp)
-                            ) {
-                                Icon(
-                                    imageVector = if (index < rating) Icons.Default.Star else Icons.Default.Star,
-                                    contentDescription = "별점 ${index + 1}",
-                                    modifier = Modifier.size(48.dp),
-                                    tint = if (index < rating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-                                )
+                        Text(
+                            "이야기는 어땠나요?",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            repeat(5) { index ->
+                                IconButton(
+                                    onClick = { rating = index + 1 },
+                                    modifier = Modifier.size(48.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = "별점 ${index + 1}",
+                                        modifier = Modifier.size(48.dp),
+                                        tint = if (index < rating)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.outline
+                                    )
+                                }
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-
                 // 저장 버튼
                 Button(
                     onClick = {
-                        navigationViewModel.navigateToHome(navController)  // 네비게이션 방식 변경
+                        navigationViewModel.navigateToHome(navController)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

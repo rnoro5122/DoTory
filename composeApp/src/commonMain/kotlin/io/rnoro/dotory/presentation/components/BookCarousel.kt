@@ -65,8 +65,8 @@ fun BookCarousel(
         }
         else -> {
             CardStyle(
-                width = 320.dp,
-                height = 320.dp,
+                width = 400.dp,
+                height = 400.dp,
                 horizontalPadding = 20.dp,
                 pageSpacing = 20.dp
             )

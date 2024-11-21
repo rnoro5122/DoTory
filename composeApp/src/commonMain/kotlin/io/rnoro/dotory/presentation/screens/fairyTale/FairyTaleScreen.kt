@@ -104,6 +104,13 @@ private fun RegularModeContent(
                         }
                     }
                 },
+                colors = TopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,  // 스크롤됐을 때도 primary 유지
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 아이콘이므로 onPrimary
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 텍스트이므로 onPrimary
+                    actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer  // primary 위의 아이콘이므로 onPrimary
+                )
             )
         }
     ) { padding ->
@@ -230,7 +237,7 @@ private fun LlmModeContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("AI 동화") },
+                title = { Text("On-Device-LLM 동화") },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기")
@@ -254,7 +261,14 @@ private fun LlmModeContent(
                             Text("활동 기록하기")
                         }
                     }
-                }
+                },
+                colors = TopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,  // 스크롤됐을 때도 primary 유지
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 아이콘이므로 onPrimary
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 텍스트이므로 onPrimary
+                    actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer  // primary 위의 아이콘이므로 onPrimary
+                )
             )
         }
     ) { padding ->

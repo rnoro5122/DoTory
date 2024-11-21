@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
@@ -17,10 +18,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import dotory.composeapp.generated.resources.Res
 import dotory.composeapp.generated.resources.book_creation
@@ -73,7 +77,13 @@ fun TopicSelectionContent(
             Switch(
                 checked = isLlmModeEnabled,
                 onCheckedChange = { viewModel.toggleLlmMode() },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp),
+                colors = SwitchDefaults.colors(
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                    uncheckedThumbColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
         }
 
@@ -181,6 +191,7 @@ private fun CompactLayout(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(vertical = 16.dp)  // 상하 여백 추가
+                .clip(RoundedCornerShape(14.dp))
         ) {
             Image(
                 painter = painterResource(resource = Res.drawable.book_creation),
@@ -255,6 +266,7 @@ private fun ExpandedLayout(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(vertical = 16.dp)
+                .clip(RoundedCornerShape(14.dp))
         ) {
             Box {  // Image와 overlay를 함께 묶는 컨테이너
                 Image(
@@ -301,7 +313,7 @@ private fun ExpandedLayout(
             ) {
                 Text(
                     text = "추천 장르",
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
                 LazyColumn(
@@ -330,7 +342,10 @@ private fun GenreCard(
     Card(
         modifier = modifier,
         onClick = { onGenreSelected(genre) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
         Column {
             Image(
@@ -346,13 +361,14 @@ private fun GenreCard(
             ) {
                 Text(
                     text = genre.displayName,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 30.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = genre.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -363,7 +379,7 @@ private fun GenreCard(
                 ) {
                     genre.subTopics.take(3).forEach { subTopic ->
                         Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondary,
                             shape = MaterialTheme.shapes.small
                         ) {
                             Text(

@@ -3,12 +3,9 @@ package io.rnoro.dotory.presentation.screens.bookShelf
 import Genre
 import StoryBook
 import StoryBookResources
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -116,13 +113,29 @@ private fun GenreSection(
             )
         }
 
-        // 수정된 BookCarousel (자동 스크롤 없음)
-        ModifiedBookCarousel(
-            books = books,
-            windowSizeClass = windowSizeClass,
+        // 카드 크기 설정
+        val cardSize = when (windowSizeClass.widthSizeClass) {
+            WindowWidthSizeClass.Compact -> 240.dp
+            WindowWidthSizeClass.Medium -> 280.dp
+            else -> 400.dp
+        }
+
+        // LazyRow로 책 목록 표시
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            onBookClick = onBookClick
-        )
+            contentPadding = PaddingValues(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(36.dp)
+        ) {
+            items(books.size) { index ->
+                BookCard(
+                    book = books[index],
+                    modifier = Modifier
+                        .width(cardSize)
+                        .height(cardSize),
+                    onClick = { onBookClick(books[index]) }
+                )
+            }
+        }
 
         HorizontalDivider(
             modifier = Modifier
@@ -130,89 +143,5 @@ private fun GenreSection(
                 .fillMaxWidth(),
             color = MaterialTheme.colorScheme.surfaceVariant
         )
-    }
-}
-
-@Composable
-private fun ModifiedBookCarousel(
-    books: List<StoryBook>,
-    windowSizeClass: WindowSizeClass,
-    modifier: Modifier = Modifier,
-    onBookClick: (StoryBook) -> Unit
-) {
-    val cardSize = when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> 160.dp
-        WindowWidthSizeClass.Medium -> 200.dp
-        WindowWidthSizeClass.Expanded -> 240.dp
-        else -> 200.dp
-    }
-
-    val pagerState = rememberPagerState(pageCount = {
-        (books.size + getCardsPerPage(windowSizeClass) - 1) / getCardsPerPage(windowSizeClass)
-    })
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxWidth(),
-            pageSpacing = 16.dp,
-            contentPadding = PaddingValues(horizontal = 24.dp)
-        ) { page ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,  // 왼쪽 정렬로 변경
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val startIndex = page * getCardsPerPage(windowSizeClass)
-                val endIndex = minOf(startIndex + getCardsPerPage(windowSizeClass), books.size)
-
-                for (index in startIndex until endIndex) {
-                    BookCard(
-                        book = books[index],
-                        modifier = Modifier
-                            .size(cardSize)
-                            .padding(end = 16.dp),  // 오른쪽 패딩으로 카드 간격 조정
-                        onClick = { onBookClick(books[index]) }
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 페이지 인디케이터
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .wrapContentWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(pagerState.pageCount) { index ->
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .size(8.dp)
-                        .background(
-                            color = if (pagerState.currentPage == index)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.surfaceVariant,
-                            shape = CircleShape
-                        )
-                )
-            }
-        }
-    }
-}
-
-private fun getCardsPerPage(windowSizeClass: WindowSizeClass): Int {
-    return when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> 2
-        WindowWidthSizeClass.Medium -> 3
-        WindowWidthSizeClass.Expanded -> 5
-        else -> 3
     }
 }

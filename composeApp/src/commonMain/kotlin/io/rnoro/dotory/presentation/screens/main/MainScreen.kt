@@ -76,7 +76,7 @@ fun MainScreenContent(
             titleBottomPadding = 12.dp,
             topPadding = 20.dp,
             contentPadding = 16.dp,
-            carouselTitleSize = 18.sp
+            carouselTitleSize = 20.sp
         )
         else -> UiSizes(
             profileIconSize = 64.dp,
@@ -86,7 +86,7 @@ fun MainScreenContent(
             titleBottomPadding = 16.dp,
             topPadding = 40.dp,
             contentPadding = 30.dp,
-            carouselTitleSize = 20.sp
+            carouselTitleSize = 24.sp
         )
     }
 
@@ -122,13 +122,13 @@ fun MainScreenContent(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "최근에 한경님이 만들었던 책들이예요!",
+                    text = "안녕하세요 한경님, 오늘은 무슨 이야기를 만들어볼까요?",
                     fontSize = uiSizes.carouselTitleSize,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 24.dp)
                         .padding(horizontal = uiSizes.contentPadding),
                     textAlign = TextAlign.Center
                 )
