@@ -52,11 +52,13 @@ fun FairyTaleScreen(
         LlmModeContent(
             displayedText = viewModel.displayedText,
             isLoading = viewModel.isLoading,
-            isGenerationCompleted = viewModel.isGenerationCompleted,  // 새로운 상태 전달
+            isGenerationCompleted = viewModel.isGenerationCompleted,
             onBackPressed = onBackPressed,
             navController = navController,
             navigationViewModel = navigationViewModel,
-            storyId = storyId
+            storyId = storyId,
+            hasCompletedActivity = viewModel.hasCompletedActivity,
+            hasCompletedStory = viewModel.hasCompletedStory
         )
     } else {
         RegularModeContent(
@@ -228,11 +230,13 @@ private fun NavigationButtons(
 private fun LlmModeContent(
     displayedText: String,
     isLoading: Boolean,
-    isGenerationCompleted: Boolean,  // 새로운 파라미터 추가
+    isGenerationCompleted: Boolean,
     onBackPressed: () -> Unit,
     navController: NavHostController,
     navigationViewModel: NavigationViewModel,
     storyId: String,
+    hasCompletedActivity: Boolean = false,  // 추가된 파라미터
+    hasCompletedStory: Boolean = false,     // 추가된 파라미터
 ) {
     Scaffold(
         topBar = {
@@ -244,7 +248,8 @@ private fun LlmModeContent(
                     }
                 },
                 actions = {
-                    if (isGenerationCompleted) {  // 생성이 완료되면 버튼 표시
+                    // 활동 기록 전에만 활동 기록하기 버튼을 표시
+                    if (isGenerationCompleted && !hasCompletedActivity) {
                         Button(
                             onClick = {
                                 navigationViewModel.navigateToActivityRecord(
@@ -264,10 +269,10 @@ private fun LlmModeContent(
                 },
                 colors = TopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,  // 스크롤됐을 때도 primary 유지
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 아이콘이므로 onPrimary
-                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,  // primary 위의 텍스트이므로 onPrimary
-                    actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer  // primary 위의 아이콘이므로 onPrimary
+                    scrolledContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             )
         }
@@ -292,16 +297,44 @@ private fun LlmModeContent(
                     )
                 }
             } else {
-                Text(
-                    text = displayedText,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 30.sp,
-                        lineHeight = 40.sp
-                    ),
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(24.dp)
-                )
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = displayedText,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 30.sp,
+                            lineHeight = 40.sp
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+
+                    // 활동 기록 완료 후 마지막 페이지에서 이야기 완성하기 버튼 표시
+                    if (isGenerationCompleted && hasCompletedActivity && !hasCompletedStory) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button(
+                                onClick = {
+                                    navigationViewModel.navigateToStoryComplete(navController, storyId)
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text("이야기 완성하기")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
