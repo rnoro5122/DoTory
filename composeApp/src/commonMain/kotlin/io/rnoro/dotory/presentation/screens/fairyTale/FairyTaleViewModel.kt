@@ -47,6 +47,9 @@ class FairyTaleViewModel : ViewModel() {
     var isGenerationCompleted by mutableStateOf(false)
         private set
 
+    var topic by mutableStateOf<String?>(null)
+        private set
+
     fun loadStory(
         storyId: String,
         isFromBookshelf: Boolean = false,
@@ -54,6 +57,7 @@ class FairyTaleViewModel : ViewModel() {
         topic: String? = null
     ): Boolean {
         this.isLlmMode = isLlmMode
+        this.topic = topic  // topic 저장
 
         return if (isLlmMode && topic != null) {
             loadLlmStory(topic)

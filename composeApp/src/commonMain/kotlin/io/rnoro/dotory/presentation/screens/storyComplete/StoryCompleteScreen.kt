@@ -2,6 +2,7 @@ package io.rnoro.dotory.presentation.screens.storyComplete
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,26 +55,33 @@ fun StoryCompleteScreen(
     val storyBook = viewModel.getCurrentStoryBook()
     var rating by remember { mutableStateOf(0) }
     var title by remember { mutableStateOf(storyBook?.title ?: "") }
+    var isLoading by remember { mutableStateOf(true) }
+
+    // 3초 후에 로딩 완료
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(3000)
+        isLoading = false
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),  // 32.dp에서 24.dp로 줄임
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "이야기 완성!",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 32.dp)  // 48.dp에서 32.dp로 줄임
+            modifier = Modifier.padding(bottom = 32.dp)
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)  // height 대신 weight 사용
-                .padding(horizontal = 24.dp),  // 32.dp에서 24.dp로 줄임
-            horizontalArrangement = Arrangement.spacedBy(32.dp)  // 48.dp에서 32.dp로 줄임
+                .weight(1f)
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             // 왼쪽: 책 표지
             Card(
@@ -81,13 +91,36 @@ fun StoryCompleteScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                storyBook?.coverImage?.let { coverImage ->
-                    Image(
-                        painter = painterResource(coverImage),
-                        contentDescription = "Book Cover",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "표지를 불러오는 중...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                } else {
+                    storyBook?.coverImage?.let { coverImage ->
+                        Image(
+                            painter = painterResource(coverImage),
+                            contentDescription = "Book Cover",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
 
@@ -96,12 +129,11 @@ fun StoryCompleteScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween  // spacedBy 대신 SpaceBetween 사용
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
-                    // 제목 입력
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
@@ -114,7 +146,6 @@ fun StoryCompleteScreen(
                         )
                     )
 
-                    // 별점 평가
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
@@ -149,7 +180,6 @@ fun StoryCompleteScreen(
                     }
                 }
 
-                // 저장 버튼
                 Button(
                     onClick = {
                         navigationViewModel.navigateToHome(navController)
