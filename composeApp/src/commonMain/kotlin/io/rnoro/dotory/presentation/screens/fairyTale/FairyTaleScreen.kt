@@ -313,6 +313,20 @@ private fun LlmModeContent(
                             Text("활동 기록하기")
                         }
                     }
+                    if (isGenerationCompleted && hasCompletedActivity && !hasCompletedStory) {
+                        Button(
+                            onClick = {
+                                navigationViewModel.navigateToStoryComplete(navController, storyId)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier.padding(end = 16.dp)
+                        ) {
+                            Text("이야기 완성하기")
+                        }
+                    }
                 },
                 colors = TopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -392,22 +406,6 @@ private fun LlmModeContent(
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState())
                         )
-
-                        if (isGenerationCompleted && hasCompletedActivity && !hasCompletedStory) {
-                            Button(
-                                onClick = {
-                                    navigationViewModel.navigateToStoryComplete(navController, storyId)
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp)
-                            ) {
-                                Text("이야기 완성하기")
-                            }
-                        }
                     }
                 }
             }

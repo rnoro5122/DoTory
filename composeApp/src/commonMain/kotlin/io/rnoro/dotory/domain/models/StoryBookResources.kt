@@ -72,26 +72,12 @@ enum class Genre(
         imageResource = Res.drawable.adventure_creation,
         subTopics = listOf("숲 속 탐험", "바다 모험", "산 정복하기", "동물 친구들과의 여행")
     ),
-    ENVIRONMENT(
-        id = "environment",
-        displayName = "환경보호",
-        description = "지구를 지키는 특별한 이야기를 만들어보아요",
-        imageResource = Res.drawable.environment_creation,
-        subTopics = listOf("분리수거 대작전", "플라스틱 없는 하루", "에너지 절약 일기", "깨끗한 지구 만들기")
-    ),
     FANTASY(
         id = "fantasy",
         displayName = "판타지",
         description = "마법의 힘으로 새로운 세계를 만들어보아요",
         imageResource = Res.drawable.fantasy_creation,
         subTopics = listOf("마법의 재활용", "환경 지킴이 마법사", "요정들의 숲", "생명의 나무 이야기")
-    ),
-    ENGLISH(
-        id = "english",
-        displayName = "영어",
-        description = "흥미로운 이야기로 영어를 배워보아요",
-        imageResource = Res.drawable.english_creation,
-        subTopics = listOf("영어 동화", "재미있는 영어 표현", "영어로 떠나는 여행", "환경을 영어로 말해요")
     ),
     CLASSIC(
         id = "classic",
@@ -108,11 +94,18 @@ enum class Genre(
         subTopics = listOf("유령의 숲", "공포의 성", "사라진 마을")
     ),
     COMEDY(
-        id = "comic",
+        id = "comedy",
         displayName = "코믹",
         description = "웃음으로 가득한 즐거운 이야기를 만들어보아요",
         imageResource = Res.drawable.comedy_creation,
         subTopics = listOf("웃음 가득한 하루", "장난꾸러기 모험", "예기치 못한 유머")
+    ),
+    ENGLISH(
+    id = "english",
+    displayName = "영어",
+    description = "흥미로운 이야기로 영어를 배워보아요",
+    imageResource = Res.drawable.english_creation,
+    subTopics = listOf("영어 동화", "재미있는 영어 표현", "영어로 떠나는 여행", "환경을 영어로 말해요")
     );
 }
 
@@ -480,7 +473,7 @@ object StoryBookResources {
         BookData(
             id = "green_island",
             title = "초록 섬의 비밀",
-            genre = Genre.ENVIRONMENT,
+            genre = Genre.ADVENTURE,
             coverImage = BookAssets.greenIsland.cover,
             description = "보물을 찾아 초록섬으로 떠나는 여정",
             firstPartText = """옛날, 맑은 바다 한가운데 초록 섬이라는 신비로운 섬이 있었어요. 전설에 따르면, 섬의 중심에는 자연의 힘을 간직한 보물이 숨겨져 있다고 했죠. “초록 섬의 보물을 찾는 자는 대지를 되살릴 힘을 얻을 것이다.” 호기심 많은 소년 한경이와 소녀 아나는 이 전설을 듣고 모험을 떠났어요. “섬의 보물을 찾으면 모두에게 도움이 될 거야. 자연도 다시 살아날 수 있을지도 몰라!” 두 사람은 작은 배를 타고 바다를 건너 초록 섬에 도착했어요. 하지만 섬은 전설처럼 아름답지 않았어요. 섬 곳곳은 말라버린 나무와 깨진 돌들로 가득했고, 푸른빛은 사라지고 황량한 풍경만 남아 있었어요. 섬 깊은 곳으로 들어가던 두 사람은 낡고 오래된 기둥을 발견했어요. 기둥에는 이상한 문구가 새겨져 있었죠. “이 섬의 숨은 빛을 되찾으려면, 인간이 남긴 흔적을 치워라.” 아나는 기둥을 가리키며 말했어요. “섬이 이런 모습이 된 건 우리가 제대로 돌보지 않았기 때문일 거야. 우리가 섬을 되살릴 방법을 찾아야 해.” 한경이는 고개를 끄덕이며 결심했어요. “우리가 할 수 있는 만큼 섬을 깨끗하게 만들어 보자.
