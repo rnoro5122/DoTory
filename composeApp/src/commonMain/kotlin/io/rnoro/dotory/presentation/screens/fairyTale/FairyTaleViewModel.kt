@@ -1,13 +1,15 @@
 package io.rnoro.dotory.presentation.screens.fairyTale
 
-import StoryBook
 import StoryBookResources
-import StoryPage
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.rnoro.dotory.domain.models.LlmStoryBook
+import io.rnoro.dotory.domain.models.LlmStoryRepository
+import io.rnoro.dotory.domain.models.StoryBook
+import io.rnoro.dotory.domain.models.StoryPage
 import io.rnoro.dotory.presentation.screens.activityRecord.ActivityRecordViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -50,20 +52,48 @@ class FairyTaleViewModel : ViewModel() {
     var topic by mutableStateOf<String?>(null)
         private set
 
-    fun loadStory(
-        storyId: String,
-        isFromBookshelf: Boolean = false,
-        isLlmMode: Boolean = false,
-        topic: String? = null
-    ): Boolean {
+    private var currentStoryId = ""
+
+    fun saveGeneratedStory(title: String, rating: Int) {
+        if (!isLlmMode) return
+
+        val newStory = LlmStoryBook(
+            id = currentStoryId,
+            title = title,
+            genre = Genre.values().find { it.id == topic } ?: Genre.FANTASY,
+            content = displayedText,
+            coverImage = StoryBookResources.allBooks
+                .filter { it.genre.id == topic }
+                .flatMap { it.illustrations }
+                .random(),
+            illustrations = StoryBookResources.allBooks
+                .filter { it.genre.id == topic }
+                .flatMap { it.illustrations }
+                .take(4),
+            rating = rating
+        )
+
+        LlmStoryRepository.saveStory(newStory)
+    }
+
+    fun loadStory(storyId: String, isFromBookshelf: Boolean = false, isLlmMode: Boolean = false, topic: String? = null): Boolean {
         this.isLlmMode = isLlmMode
-        this.topic = topic  // topic 저장
+        this.topic = topic
+        this.currentStoryId = storyId
 
         return if (isLlmMode && topic != null) {
             loadLlmStory(topic)
             true
         } else {
-            loadRegularStory(storyId, isFromBookshelf)
+            // LLM으로 생성된 스토리인지 확인
+            val llmStory = LlmStoryRepository.getStoryById(storyId)
+            if (llmStory != null) {
+                storyBook = LlmStoryRepository.convertToStoryBook(llmStory)
+                pages = storyBook?.generatePages() ?: emptyList()
+                true
+            } else {
+                loadRegularStory(storyId, isFromBookshelf)
+            }
         }
     }
 

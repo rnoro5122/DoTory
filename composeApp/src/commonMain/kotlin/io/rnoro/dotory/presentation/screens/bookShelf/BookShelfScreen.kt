@@ -1,7 +1,6 @@
 package io.rnoro.dotory.presentation.screens.bookShelf
 
 import Genre
-import StoryBook
 import StoryBookResources
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,8 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import io.rnoro.dotory.domain.models.LlmStoryRepository
 import io.rnoro.dotory.presentation.components.BookCard
 import io.rnoro.dotory.presentation.navigation.NavigationViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import io.rnoro.dotory.domain.models.StoryBook
 
 @Composable
 expect fun WindowSizeWrapper(content: @Composable (WindowSizeClass) -> Unit)
@@ -45,8 +50,16 @@ fun BookShelfScreenContent(
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-    val booksByGenre = remember {
-        StoryBookResources.allBooks.groupBy { it.genre }
+    var booksByGenre by remember { mutableStateOf<Map<Genre, List<StoryBook>>>(emptyMap()) }
+
+    LaunchedEffect(Unit) {
+        val allBooks = buildList {
+            addAll(StoryBookResources.allBooks)
+            addAll(LlmStoryRepository.getAllStories().map {
+                LlmStoryRepository.convertToStoryBook(it)
+            })
+        }
+        booksByGenre = allBooks.groupBy { it.genre }
     }
 
     Column(
@@ -56,7 +69,7 @@ fun BookShelfScreenContent(
             .padding(top = 24.dp, bottom = 100.dp)
     ) {
         Text(
-            text = "나의 책장",
+            text = "내가 만든 이야기들",
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)

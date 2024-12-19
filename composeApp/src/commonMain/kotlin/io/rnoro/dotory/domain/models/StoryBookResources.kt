@@ -1,61 +1,7 @@
 import dotory.composeapp.generated.resources.Res
 import dotory.composeapp.generated.resources.*
+import io.rnoro.dotory.domain.models.StoryBook
 import org.jetbrains.compose.resources.DrawableResource
-
-data class StoryBook(
-    val id: String,
-    val title: String,
-    val genre: Genre,
-    val coverImage: DrawableResource,
-    val firstPartText: String,
-    val activityImage: DrawableResource,
-    val activityText: String,
-    val secondPartText: String,
-    val illustrations: List<DrawableResource>,
-    val description: String,
-) {
-    fun generatePages(isFirstPart: Boolean = true, maxCharsPerPage: Int = 200): List<StoryPage> {
-        val text = if (isFirstPart) firstPartText else secondPartText
-        val pages = mutableListOf<StoryPage>()
-        val sentences = text.split(". ")
-            .filter { it.isNotBlank() }
-            .map { if (!it.endsWith(".")) "$it." else it }
-
-        var currentPage = StringBuilder()
-        var pageNumber = 1
-        var illustrationIndex = 0
-
-        for (sentence in sentences) {
-            if (currentPage.length + sentence.length > maxCharsPerPage && currentPage.isNotEmpty()) {
-                pages.add(StoryPage(
-                    number = pageNumber,
-                    content = currentPage.toString().trim(),
-                    illustration = illustrations[illustrationIndex % illustrations.size]
-                ))
-                pageNumber++
-                illustrationIndex++
-                currentPage = StringBuilder()
-            }
-            currentPage.append("$sentence ")
-        }
-
-        if (currentPage.isNotEmpty()) {
-            pages.add(StoryPage(
-                number = pageNumber,
-                content = currentPage.toString().trim(),
-                illustration = illustrations[illustrationIndex % illustrations.size]
-            ))
-        }
-
-        return pages
-    }
-}
-
-data class StoryPage(
-    val number: Int,         // 페이지 번호
-    val content: String,     // 페이지 내용
-    val illustration: DrawableResource  // 삽화
-)
 
 // 3. 장르 정의 (enum으로 관리)
 enum class Genre(
@@ -106,6 +52,13 @@ enum class Genre(
     description = "흥미로운 이야기로 영어를 배워보아요",
     imageResource = Res.drawable.english_creation,
     subTopics = listOf("영어 동화", "재미있는 영어 표현", "영어로 떠나는 여행", "환경을 영어로 말해요")
+    ),
+    SPECIAL(
+        id = "special",
+        displayName = "특별한 이야기",
+        description = "날이면 날마다 오는 이야기가 아니여~",
+        imageResource = Res.drawable.christmas,
+        subTopics = listOf("이번 테마는", "크리스마스", "다음에는", "뭘까?")
     );
 }
 
@@ -277,6 +230,24 @@ object StoryBookResources {
                 Res.drawable.clocktower_6,
             )
         )
+        val christmas = BookResources(
+            cover = Res.drawable.christmas,
+            activity = Res.drawable.book_fantasy3,
+            illustrations = listOf(
+                Res.drawable.christmas1,
+                Res.drawable.christmas2,
+                Res.drawable.christmas3,
+                Res.drawable.christmas4,
+                Res.drawable.christmas5,
+                Res.drawable.christmas6,
+                Res.drawable.christmas7,
+                Res.drawable.christmas8,
+                Res.drawable.christmas9,
+                Res.drawable.christmas10,
+                Res.drawable.christmas11,
+                Res.drawable.christmas12,
+            )
+        )
     }
 
     fun String.removeLineBreaks(): String {
@@ -436,20 +407,6 @@ object StoryBookResources {
             illustrations = BookAssets.cursedCastle.illustrations
         ),
         BookData(
-            id = "forest_key",
-            title = "숲의 영혼을 깨우는 열쇠",
-            genre = Genre.ADVENTURE,
-            coverImage = BookAssets.forestKey.cover,
-            description = "라이언과 엘라의 열쇠를 찾기위한 모험",
-            firstPartText = """옛날, 깊은 숲 속에 영혼의 숲이라는 신비로운 장소가 있었어요. 전설에 따르면, 숲의 중심에는 영혼의 열쇠가 숨겨져 있고, 그것을 찾는 자는 어떤 위기든 극복할 힘을 얻게 된다고 했죠. 소년 한경이와 소녀 엘라는 이 전설을 듣고 모험을 떠나기로 결심했어요. “숲의 열쇠를 찾으면, 우리 마을을 도울 수 있을지도 몰라!” 숲으로 들어선 두 사람은 처음에는 반짝이는 햇살과 푸르른 나무들에 감탄했어요. 하지만 점점 길은 험난해졌고, 숲은 점점 어두워졌죠. 두 사람은 숲 속 깊은 곳에서 이상한 돌문에 도달했어요. 돌문에는 글귀가 새겨져 있었습니다. “열쇠를 얻고 싶다면, 너희의 용기를 증명하라. 진정한 용기는 마음에서 비롯된다.” 한경이는 고민하며 말했어요. “이 문을 통과하려면 우리가 어떤 시험을 받아야 할까? 위험하지 않을까?” 엘라는 미소 지으며 대답했어요. “전설에 따르면 열쇠를 찾으려면 진심을 보여야 한다고 했어. 우리도 할 수 있을 거야!” 두 사람은 돌문을 밀어 숲의 중심으로 향했습니다.""".trimIndent().removeLineBreaks(),
-            activityImage = Res.drawable.book_fantasy3,
-            activityText = "용기를 발휘했던 경험이 있다면 우리에게 알려줘!",
-            secondPartText = """숲의 중심에 들어선 한경이와 엘라는 빛나는 연못을 발견했어요. 연못 한가운데에는 작은 석상이 있었고, 석상 위에는 열쇠처럼 생긴 빛나는 물체가 놓여 있었죠. 하지만 열쇠를 잡으려는 순간, 연못 주변에서 거대한 그림자가 나타났어요. 그림자는 두 사람을 내려다보며 깊은 목소리로 말했어요. “열쇠를 얻으려면 두려움에 맞서야 한다. 너희는 정말 준비되었는가?" 한경이는 처음엔 주춤했지만, 엘라가 용기를 내어 말했어요. “우리는 두렵지만, 진심으로 열쇠를 얻고 싶어요. 우리 마을을 돕고, 이 숲의 비밀을 전하고 싶습니다!”
-            그들의 진심이 그림자에게 닿자, 그림자는 천천히 사라지며 연못 위 열쇠가 환히 빛났습니다. 한경이와 엘라는 열쇠를 손에 넣었고, 숲은 환한 빛으로 가득 찼어요. 그들은 깨달았어요. “진정한 용기는 두려움을 인정하면서도 앞으로 나아가는 마음이야.”
-            마을로 돌아간 두 사람은 자신들의 이야기를 전하며, 용기의 중요성을 모두에게 알렸어요. 영혼의 숲은 전설 속 희망의 상징으로 남게 되었답니다.""".trimIndent().removeLineBreaks(),
-            illustrations = BookAssets.forestKey.illustrations
-        ),
-        BookData(
             id = "sky_walk",
             title = "하늘을 걷는 아이, 한경",
             genre = Genre.FANTASY,
@@ -485,20 +442,6 @@ object StoryBookResources {
             illustrations = BookAssets.greenIsland.illustrations
         ),
         BookData(
-            id = "starlight_temple",
-            title = "별빛의 사원",
-            genre = Genre.ADVENTURE,
-            coverImage = BookAssets.starlightTemple.cover ,
-            description = "별빛사원을 찾아 떠나는 모험 이야기",
-            firstPartText = """깊은 산 속, 별빛이 가장 밝게 비치는 밤에만 모습을 드러내는 별빛 사원이라는 전설이 전해졌어요. 사원의 중심에는 소원을 들어주는 신비로운 보석이 숨겨져 있다고 했죠. “별빛 사원의 보석을 가진 자는 가장 간절한 소원을 이룰 수 있다.” 호기심 많은 소년 한경과 그녀의 친구 테오는 전설의 진실을 밝히기 위해 모험을 떠났어요. "별빛 사원의 보석을 찾는다면 우리의 꿈을 이룰 수 있을지도 몰라!” 밤이 되자, 두 사람은 산을 따라 별빛 사원이 있다는 장소를 향해 걸어갔어요. 하지만 길은 점점 험난해졌고, 그들이 도착한 곳은 거대한 계곡과 끊어진 다리로 막혀 있었어요. 테오는 긴장하며 말했어요. “이 다리를 건널 방법이 없는데? 다른 길을 찾아야 할까?” 한경 별빛을 따라 주변을 둘러보다가, 멀리 보이는 희미한 계단을 발견했어요. “저 계단을 올라가 보면 길이 이어질지도 몰라. 가보자!” 두 사람은 별빛이 인도하는 길을 따라 계단을 올랐고, 점점 사원의 빛이 가까워지는 걸 느꼈습니다.
-            """.trimIndent().removeLineBreaks(),
-            activityImage = Res.drawable.book_fantasy3,
-            activityText = " 어려운 도전을 극복했던 경험을 나누어보자!",
-            secondPartText = """한경이와 테오는 마침내 별빛 사원의 중심에 도달했어요. 그곳에는 거대한 수정 구슬이 놓여 있었고, 주변에는 별빛처럼 반짝이는 문양이 새겨져 있었어요. 구슬에 손을 대려는 순간, 땅이 흔들리며 깊은 목소리가 들려왔죠. “보석은 너희의 소망이 진실하고 간절할 때만 모습을 드러낼 것이다. 너희의 소망을 이야기해 보아라.” 셀린은 용기를 내어 말했어요. “저는 제 가족이 행복하게 살 수 있길 바라요.” 테오는 진지하게 덧붙였어요. “그리고 모든 사람들이 더 나은 세상을 만들 수 있는 기회를 얻었으면 좋겠어요.” 그들의 말이 끝나자, 사원 안은 별빛으로 가득 찼고 구슬이 환하게 빛났어요. 목소리는 부드럽게 말했어요. “너희의 소망은 순수하다. 이 보석은 너희가 간절히 바라는 미래로 나아가는 길을 열어줄 것이다.” 셀린과 테오는 보석의 힘을 얻어 마을로 돌아갔고, 그 후로도 그들의 용기와 진심은 전설로 남았답니다. 사람들은 별빛 사원을 희망과 용기의 상징으로 여겼고, 두 사람의 이야기를 오래도록 기억했어요.
-            """.trimIndent().removeLineBreaks(),
-            illustrations = BookAssets.starlightTemple.illustrations
-        ),
-        BookData(
             id = "clock_tower",
             title = "잃어버린 시간을 찾는 시계탑",
             genre = Genre.ADVENTURE,
@@ -511,9 +454,21 @@ object StoryBookResources {
             secondPartText = """한경이와 리나는 시계탑 내부를 깨끗이 정리하기 시작했어요. 녹슨 톱니바퀴들을 닦아내고, 부서진 기계를 고쳤습니다. 곳곳에 쌓여 있던 먼지와 쓰레기를 하나씩 치우며 시계탑의 기능을 복구하려 애썼어요. 그들이 마지막 톱니바퀴를 돌리자, 시계탑 중심에서 밝은 빛이 퍼졌습니다. 그 빛 속에서 황금 톱니바퀴가 나타났고, 시계탑의 목소리가 들려왔어요. “너희는 시간을 되돌릴 자격이 있다. 주변의 것들을 소중히 여겨라.” 시계탑은 다시 작동하기 시작했고, 마을의 시간도 정상으로 돌아왔어요. 마을 사람들은 한경이와 리나의 이야기를 듣고, 시간을 아끼고 주변을 돌보는 새로운 삶을 시작했답니다. 리나는 마을 사람들에게 말했어요. “시간과 삶은 함께 흘러가야 해. 우리가 둘 다 소중히 여긴다면, 멈추는 일은 없을 거야.” 그 후로 마을 사람들은 시간을 더 가치 있게 사용하며 살게 되었어요. 시계탑은 다시 마을의 중심에서 빛나는 역할을 하게 되었답니다.
             """.trimIndent().removeLineBreaks(),
             illustrations = BookAssets.clockTower.illustrations
+        ),
+        BookData(
+            id = "christmas",
+            title = "산타와 루돌프의 환경 대모험",
+            genre = Genre.SPECIAL,
+            coverImage = BookAssets.christmas.cover ,
+            description = "시계탑을 되돌리기 위한 모험 이야기",
+            firstPartText = """옛날 옛적, 북극의 한 구석에 산타와 그의 친구 루돌프가 살고 있었어요. 산타는 매년 크리스마스가 다가오면 전 세계 아이들에게 선물을 나눠주기 위해 준비를 했답니다. 루돌프는 산타의 썰매를 끌며 밤하늘을 환히 비추는 빨간 코로 길을 안내했죠. 어느 날, 산타는 엘프들과 함께 선물을 포장하며 말했어요. 올해도 아이들이 얼마나 착한 일을 했는지 보고서가 가득하구나! 이 선물들을 모두 배달하려면 정말 바쁘겠어. 루돌프도 신나게 대답했어요. 걱정 마세요, 산타! 제가 썰매를 빠르게 끌어서 모두 배달할 수 있을 거예요! 하지만 그때, 북극 하늘이 갑자기 어두워지고 이상한 소리가 들렸어요. 산타와 루돌프는 창문을 열고 밖을 내다봤죠. 눈이 내리는 대신 검은 연기가 하늘로 올라가고 있었어요. 산타와 루돌프는 북극 곳곳을 둘러보기 시작했어요. 그런데 놀랍게도, 북극의 얼음이 녹아내리고 있었어요! “이럴 수가! 얼음이 녹아서 우리 공장이 물에 잠기게 생겼잖아!” 엘프들이 외쳤어요. 루돌프도 걱정스러운 목소리로 말했죠. “산타, 이대로라면 썰매를 끌고 다닐 얼음길도 없을 거예요!” 산타는 고민에 빠졌어요. “왜 이런 일이 생긴 걸까?” 그때 북극곰 친구가 찾아와 말했어요. “사람들이 너무 많은 플라스틱을 쓰고, 자동차와 공장에서 나오는 연기로 지구가 점점 더워지고 있어. 그래서 얼음이 녹고 있는 거야!.”
+            """.trimIndent().removeLineBreaks(),
+            activityImage = Res.drawable.book_fantasy3,
+            activityText = "이곳을 함께 깨끗이 치워보자!",
+            secondPartText = """몇 년 후, 아이들의 노력 덕분에 북극은 다시 차가운 얼음으로 뒤덮였고, 산타와 루돌프는 다시 크리스마스를 준비할 수 있게 되었어요. 산타는 웃으며 말했죠. “아이들이 정말 대단하구나! 이 세상은 너희 덕분에 더 밝아질 거야.” 루돌프도 환하게 웃으며 대답했어요. “맞아요, 산타! 이제 우리는 걱정 없이 선물을 배달하러 갈 수 있어요!” 산타는 아이들이 보낸 보고서를 읽으며 미소를 지었어요. 보고서에는 아이들이 실천한 환경 보호 활동이 자세히 적혀 있었답니다. 어떤 아이는 플라스틱 사용을 줄이기 위해 물병을 들고 다녔고, 또 어떤 아이는 가족과 함께 나무를 심었다고 했어요. 특히 한 아이의 이야기가 산타의 마음을 따뜻하게 만들었어요. 그 아이는 이렇게 적었죠: “저는 학교에 갈 때마다 자동차 대신 버스를 타고 다니기로 했어요. 처음에는 조금 불편했지만, 친구들과 함께 버스를 타면서 더 즐거운 시간을 보낼 수 있었답니다. 그리고 제가 버스를 탈 때마다 자동차가 하나 줄어드는 것 같아서 뿌듯했어요!” 산타는 그 편지를 읽고 엘프들에게 말했어요. “이 아이가 얼마나 멋진지 보렴! 작은 행동이지만, 이런 노력이 모여서 큰 변화를 만들어내는 거야.” 북극곰 친구도 웃으며 말했어요. “맞아요! 아이들이 대중교통을 이용하고, 자전거를 타며 환경을 지키려 노력한 덕분에 북극의 얼음이 다시 단단해졌답니다.” 루돌프도 고개를 끄덕이며 말했죠. “이제 썰매를 끌 때 얼음길이 튼튼해서 걱정 없겠네요! 아이들이 정말 대단해요.” 그렇게 산타와 루돌프는 다시 전 세계 아이들에게 행복을 나눠주며 크리스마스를 맞이했답니다. 그리고 이번 크리스마스에는 특별히 환경 보호에 앞장선 아이들에게 감사의 선물과 함께 편지를 보냈어요. 편지에는 이렇게 적혀 있었답니다: “사랑하는 우리 친구들, 너희의 작은 실천이 북극뿐만 아니라 전 세계를 더 아름답게 만들고 있단다. 앞으로도 지구를 사랑하는 마음을 잊지 말아줘! 너희 덕분에 크리스마스가 더욱 특별해졌어.” 아이들은 그 편지를 받고 기뻐하며 앞으로도 환경을 위해 노력할 것을 다짐했답니다. 그렇게 모두가 함께 힘을 모아 지구를 지키며 행복한 크리스마스를 맞았어요.
+            """.trimIndent().removeLineBreaks(),
+            illustrations = BookAssets.christmas.illustrations
         )
-
-
     )
 
 

@@ -192,6 +192,9 @@ fun StoryCompleteScreen(
 
                 Button(
                     onClick = {
+                        if (viewModel.isLlmMode) {
+                            viewModel.saveGeneratedStory(title, rating)
+                        }
                         navigationViewModel.navigateToHome(navController)
                     },
                     modifier = Modifier

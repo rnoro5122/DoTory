@@ -1,6 +1,5 @@
 package io.rnoro.dotory.presentation.screens.fairyTale
 
-import StoryBook
 import StoryBookResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import io.rnoro.dotory.domain.models.StoryBook
 import io.rnoro.dotory.presentation.navigation.NavigationViewModel
 import org.jetbrains.compose.resources.painterResource
 
@@ -146,7 +146,7 @@ private fun RegularModeContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "이야기를 불러오는 중...",
+                        text = "이야기 생성 중...",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -355,7 +355,7 @@ private fun LlmModeContent(
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "이야기 생성 중",
+                            text = "이야기 생성 준비 중...",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold
                         )

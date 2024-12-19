@@ -1,6 +1,5 @@
 package io.rnoro.dotory.presentation.components
 
-import StoryBook
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.rnoro.dotory.domain.models.StoryBook
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

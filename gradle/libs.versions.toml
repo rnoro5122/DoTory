@@ -18,7 +18,7 @@ compose-multiplatform = "1.7.0"
 junit = "4.13.2"
 kotlin = "2.0.21"
 python = "3.11"
-chaquo = "15.0.0"
+chaquo = "16.0.0"
 
 [libraries]
 calf-file-picker = { module = "com.mohamedrejeb.calf:calf-file-picker", version.ref = "calfFilePicker" }

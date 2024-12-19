@@ -1,6 +1,5 @@
 package io.rnoro.dotory.presentation.components
 
-import StoryBook
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -29,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import io.rnoro.dotory.domain.models.StoryBook
 import io.rnoro.dotory.platform.rememberWindowInfo
 import io.rnoro.dotory.util.pageTransitionAnimation
 import kotlinx.coroutines.delay
@@ -65,8 +65,8 @@ fun BookCarousel(
         }
         else -> {
             CardStyle(
-                width = 400.dp,
-                height = 400.dp,
+                width = 300.dp,
+                height = 300.dp,
                 horizontalPadding = 20.dp,
                 pageSpacing = 20.dp
             )
